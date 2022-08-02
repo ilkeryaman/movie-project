@@ -4,7 +4,7 @@ This project is for learning Spring Boot Topics.
 
 ## Related Topics
 1) Github usage
-2) REST servis (Method Types, HTTP Status Codes)
+2) REST service (Method Types, HTTP Status Codes)
 3) Spring Security
 4) Validations
 5) Exception Handling
