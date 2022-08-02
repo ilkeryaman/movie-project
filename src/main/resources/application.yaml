@@ -1,0 +1,4 @@
+movie:
+  list:
+    file:
+      url: src/main/resources/movies.json

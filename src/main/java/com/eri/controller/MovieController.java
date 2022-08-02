@@ -1,19 +1,24 @@
 package com.eri.controller;
 
+
+import com.eri.model.Movie;
+import com.eri.service.MovieManagerService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/movie-api")
 public class MovieController {
 
+    @Autowired
+    MovieManagerService movieManagerService;
+
     @GetMapping("/movies")
-    public String listMovies(@RequestParam(required = false) String id){
-        if(id == null){
-            return "Hello";
-        } else {
-            return "Hello" + id;
-        }
+    public List<Movie> listMovies(@RequestParam(required = false) String id){
+        return movieManagerService.getMovies();
     }
 
     @GetMapping("/movies/{id}")
