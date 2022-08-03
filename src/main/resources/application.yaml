@@ -2,6 +2,3 @@ movie:
   list:
     file:
       url: src/main/resources/data/movies.json
-
-Logback:
-  configurationFile: src/main/resources/logging/logback.xml
