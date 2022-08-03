@@ -1,20 +1,21 @@
-package com.eri.service;
+package com.eri.service.impl;
 
-import com.eri.data.MovieMemoryDB;
 import com.eri.model.Movie;
-import com.eri.service.memorydb.MovieMemoryDBService;
+import com.eri.service.IMovieManagerService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
-public class MovieManagerService {
+@Service("movieManagerFileService")
+public class MovieManagerFileServiceImpl implements IMovieManagerService {
+    private List<Movie> movies;
 
     @Value("${movie.list.file.url}")
     String movieFileUrl;
@@ -22,17 +23,21 @@ public class MovieManagerService {
     @Autowired
     ObjectMapper objectMapper;
 
-    @Autowired
-    MovieMemoryDB movieMemoryDB;
+    public MovieManagerFileServiceImpl(){
+        movies = new ArrayList<>();
+    }
 
-    public List<Movie> getMovies(){
-        List<Movie> movies = new ArrayList<>();
-        /*try {
+    @PostConstruct
+    public void afterInitialize(){
+        try {
             movies = objectMapper.readValue(new File(movieFileUrl), List.class);
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
-        movies = movieMemoryDB.getMovies();
+        }
+    }
+
+    @Override
+    public List<Movie> getMovies(){
         return movies;
     }
 }
