@@ -5,6 +5,8 @@ import com.eri.model.Director;
 import com.eri.model.Movie;
 import com.eri.model.Star;
 import com.eri.service.memorydb.IMovieMemoryDBService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,7 @@ import java.util.List;
 
 @Service
 public class MovieMemoryDBServiceImpl implements IMovieMemoryDBService {
+    private static final Logger logger = LoggerFactory.getLogger(MovieMemoryDBServiceImpl.class);
 
     @Autowired
     MovieMemoryDB memoryDB;
@@ -21,6 +24,11 @@ public class MovieMemoryDBServiceImpl implements IMovieMemoryDBService {
     @PostConstruct
     public void afterInitialize(){
         addMovies();
+        logInitialized();
+    }
+
+    private void logInitialized(){
+        logger.debug("MemoryDB is initialized.");
     }
 
     private void addMovies(){
