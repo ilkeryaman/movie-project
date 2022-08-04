@@ -2,6 +2,7 @@ package com.eri.service.impl;
 
 import com.eri.model.Movie;
 import com.eri.service.IMovieManagerService;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,7 +31,7 @@ public class MovieManagerFileServiceImpl implements IMovieManagerService {
     @PostConstruct
     public void afterInitialize(){
         try {
-            movies = objectMapper.readValue(new File(movieFileUrl), List.class);
+            movies = objectMapper.readValue(new File(movieFileUrl), new TypeReference<List<Movie>>() {});
         } catch (IOException e) {
             e.printStackTrace();
         }
