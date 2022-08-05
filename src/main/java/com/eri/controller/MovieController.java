@@ -1,12 +1,13 @@
 package com.eri.controller;
 
-
 import com.eri.model.Movie;
 import com.eri.service.IMovieManagerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -17,23 +18,28 @@ public class MovieController {
     IMovieManagerService movieManagerService;
 
     @GetMapping("/movies")
-    public List<Movie> listMovies(@RequestParam(required = false) String id){
+    public List<Movie> listMovies(@RequestParam(required = false) Integer id){
+        if(id != null){
+            Movie movie = movieManagerService.findMovieById(id);
+            return movie == null ? Collections.emptyList() : Arrays.asList(movie);
+        }
         return movieManagerService.getMovies();
     }
 
     @GetMapping("/movies/{id}")
-    public String getMovie(@PathVariable("id") String id){
-        return "Hello" + id;
+    public Movie getMovie(@PathVariable("id") Integer id){
+        return movieManagerService.findMovieById(id);
     }
 
     @PostMapping("/movies")
     @ResponseStatus(HttpStatus.CREATED)
-    public String addMovie(@RequestBody String movieName){
-        return "Hello";
+    public void addMovie(@RequestBody Movie movie){
+        movieManagerService.addMovie(movie);
     }
 
     @DeleteMapping("/movies/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteMovie(@PathVariable("id") String id){
+    public void deleteMovie(@PathVariable("id") Integer id){
+        movieManagerService.removeMovieById(id);
     }
 }

@@ -1,3 +1,6 @@
+server:
+  port: 8087
+
 movie:
   list:
     file:

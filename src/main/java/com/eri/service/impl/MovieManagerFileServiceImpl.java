@@ -1,7 +1,7 @@
 package com.eri.service.impl;
 
 import com.eri.model.Movie;
-import com.eri.service.IMovieManagerService;
+import com.eri.service.MovieManagerService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service("movieManagerFileService")
-public class MovieManagerFileServiceImpl implements IMovieManagerService {
+public class MovieManagerFileServiceImpl extends MovieManagerService {
     private List<Movie> movies;
 
     @Value("${movie.list.file.url}")
