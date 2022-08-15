@@ -14,7 +14,7 @@ import java.util.List;
 @RequestMapping("/movie-api")
 public class MovieController {
 
-    @Resource(name="movieManagerFileService")
+    @Resource(name="movieManagerSoapService")
     IMovieManagerService movieManagerService;
 
     @GetMapping("/movies")

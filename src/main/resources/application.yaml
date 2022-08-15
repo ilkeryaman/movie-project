@@ -1,6 +1,11 @@
 server:
   port: 8087
 
+movie-api:
+  soap:
+    default-uri: http://localhost:8085/movie-api/movies
+    context-path: com.eri.generated.movieapi.stub
+
 movie:
   list:
     file:
