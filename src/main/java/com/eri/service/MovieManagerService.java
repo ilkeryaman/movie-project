@@ -1,5 +1,6 @@
 package com.eri.service;
 
+import com.eri.exception.MovieNotFoundException;
 import com.eri.model.Movie;
 
 import java.util.Optional;
@@ -11,8 +12,9 @@ public abstract class MovieManagerService implements IMovieManagerService {
         Optional<Movie> movieOptional = getMovies().stream().filter(movie -> movie.getId() == id).findFirst();
         if(movieOptional.isPresent()){
             return movieOptional.get();
+        } else {
+            throw new MovieNotFoundException();
         }
-        return null;
     }
 
     @Override

@@ -1,10 +1,10 @@
 package com.eri.service.impl;
 
 import com.eri.converter.mapstruct.IMovieMapper;
+import com.eri.exception.MovieNotFoundException;
 import com.eri.generated.movieapi.stub.*;
 import com.eri.model.Movie;
 import com.eri.service.IMovieManagerService;
-import com.eri.service.MovieManagerService;
 import com.eri.service.soap.SoapClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,7 +33,11 @@ public class MovieManagerSoapServiceImpl implements IMovieManagerService {
 
     @Override
     public Movie findMovieById(int id) {
-        return getMovieById(id).stream().findFirst().orElse(null);
+        Movie movie = getMovieById(id).stream().findFirst().orElse(null);
+        if(movie == null){
+            throw new MovieNotFoundException();
+        }
+        return movie;
     }
 
     @Override

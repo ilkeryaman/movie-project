@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
 @RequestMapping("/movie-api")
 public class MovieController {
 
-    @Resource(name="movieManagerSoapService")
+    @Resource(name="movieManagerFileService")
     IMovieManagerService movieManagerService;
 
     @GetMapping("/movies")
@@ -33,7 +34,7 @@ public class MovieController {
 
     @PostMapping("/movies")
     @ResponseStatus(HttpStatus.CREATED)
-    public void addMovie(@RequestBody Movie movie){
+    public void addMovie(@Valid @RequestBody Movie movie){
         movieManagerService.addMovie(movie);
     }
 

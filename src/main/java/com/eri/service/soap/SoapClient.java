@@ -1,6 +1,5 @@
 package com.eri.service.soap;
 
-
 import com.eri.generated.movieapi.stub.ListMoviesResponse;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 
