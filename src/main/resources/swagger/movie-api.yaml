@@ -1,0 +1,159 @@
+openapi: 3.0.1
+info:
+  title: Movie API
+  description: This API is developed for learning purposes.
+  version: "1.0"
+servers:
+- url: http://localhost:8087
+  description: Generated server url
+paths:
+  /movie-api/movies:
+    get:
+      tags:
+      - movie-controller
+      summary: Lists all movies.
+      operationId: listMovies
+      parameters:
+      - name: id
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "400":
+          description: Bad Request
+          content: {}
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                type: object
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: string
+    post:
+      tags:
+      - movie-controller
+      summary: Adds a new movie.
+      operationId: addMovie
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Movie'
+        required: true
+      responses:
+        "400":
+          description: Bad Request
+          content: {}
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                type: object
+        "201":
+          description: Created
+  /movie-api/movies/{id}:
+    get:
+      tags:
+      - movie-controller
+      summary: Gets movie by id.
+      operationId: getMovie
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "400":
+          description: Bad Request
+          content: {}
+        "404":
+          description: Not Found
+          content: {}
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: string
+    delete:
+      tags:
+      - movie-controller
+      summary: Deletes a movie by id.
+      operationId: deleteMovie
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "400":
+          description: Bad Request
+          content: {}
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                type: object
+        "204":
+          description: No Content
+components:
+  schemas:
+    Director:
+      required:
+      - name
+      - surname
+      type: object
+      properties:
+        name:
+          type: string
+        surname:
+          type: string
+    Movie:
+      required:
+      - categories
+      - directors
+      - stars
+      - title
+      type: object
+      properties:
+        id:
+          minimum: 1
+          type: integer
+          format: int32
+        title:
+          type: string
+        categories:
+          type: array
+          items:
+            type: string
+        directors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Director'
+        stars:
+          type: array
+          items:
+            $ref: '#/components/schemas/Star'
+    Star:
+      required:
+      - name
+      - surname
+      type: object
+      properties:
+        name:
+          type: string
+        surname:
+          type: string
