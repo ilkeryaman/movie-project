@@ -12,7 +12,7 @@ spring-doc:
     enabled: true
     path: /movie-api/api-docs
   swagger-ui:
-    path: /movie-api/swagger-ui.html
+    path: /movie-api/swagger-ui
 
 movie-api:
   rest:
@@ -26,9 +26,15 @@ movie:
     file:
       url: src/main/resources/data/movies.json
 
+auth:
+  enabled: true
+  ignored:
+    urls: /movie-api/swagger-ui/**, /movie-api/api-docs, /movie-api/api-docs/*
+
 keycloak:
   auth-server-url: https://lemur-14.cloud-iam.com/auth
   realm: movie-project
   resource: movie-app
   bearer-only: true
   use-resource-role-mappings: false
+

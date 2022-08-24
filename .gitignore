@@ -17,3 +17,5 @@ target/
 
 # Generated sources
 src/main/java/com/eri/generated
+
+src/main/java/META-INF/*
