@@ -29,7 +29,7 @@ movie:
 auth:
   enabled: true
   ignored:
-    urls: /movie-api/swagger-ui/**, /movie-api/api-docs, /movie-api/api-docs/*
+    urls: /movie-api/swagger-ui/**, /movie-api/api-docs, /movie-api/api-docs/*, /actuator/**
 
 keycloak:
   auth-server-url: https://lemur-14.cloud-iam.com/auth
@@ -38,3 +38,8 @@ keycloak:
   bearer-only: true
   use-resource-role-mappings: false
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, heapdump, threaddump, metrics
