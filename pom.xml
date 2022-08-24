@@ -23,6 +23,7 @@
         <jakarta.xml.ws-api.version>4.0.0</jakarta.xml.ws-api.version>
         <jaxws.version>4.0.0</jaxws.version>
         <jaxb2-plugin.version>0.15.1</jaxb2-plugin.version>
+        <keycloack.version>13.0.1</keycloack.version>
         <mapstruct.version>1.5.2.Final</mapstruct.version>
     </properties>
 
@@ -88,6 +89,17 @@
         </dependency>
         <!-- SOAP Consuming END -->
 
+        <!-- Security START -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-spring-boot-starter</artifactId>
+        </dependency>
+        <!-- Security END -->
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -99,6 +111,18 @@
             <version>${mapstruct.version}</version>
         </dependency>
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.keycloak.bom</groupId>
+                <artifactId>keycloak-adapter-bom</artifactId>
+                <version>${keycloack.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <plugins>

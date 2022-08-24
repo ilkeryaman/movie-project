@@ -10,3 +10,15 @@ movie:
   list:
     file:
       url: src/main/resources/data/movies.json
+
+keycloak:
+  auth-server-url: https://lemur-14.cloud-iam.com/auth
+  realm: movie-project
+  resource: movie-api
+  bearer-only: true
+  use-resource-role-mappings: false
+
+logging:
+  level:
+    org:
+      keycloak: DEBUG
