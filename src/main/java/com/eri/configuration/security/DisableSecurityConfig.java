@@ -8,7 +8,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @ConditionalOnProperty(name = "auth.enabled", havingValue = "false")
-public class DisableSecurityConfiguration {
+public class DisableSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf()
