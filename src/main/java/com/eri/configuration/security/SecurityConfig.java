@@ -1,5 +1,6 @@
 package com.eri.configuration.security;
 
+import com.eri.configuration.security.enums.Roles;
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
 import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
 import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
@@ -38,7 +39,10 @@ class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         http.csrf()
                 .disable()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/movie-api/**").hasRole("movie_lister")
+                .antMatchers(HttpMethod.GET, "/movie-api/movies**").hasAnyRole(Roles.MOVIE_CREATOR.getName(), Roles.MOVIE_LISTER.getName())
+                .antMatchers(HttpMethod.GET, "/movie-api/movies/**").hasAnyRole(Roles.MOVIE_CREATOR.getName(), Roles.MOVIE_LISTER.getName())
+                .antMatchers(HttpMethod.POST, "/movie-api/movies**").hasRole(Roles.MOVIE_CREATOR.getName())
+                .antMatchers(HttpMethod.DELETE, "/movie-api/movies/**").hasRole(Roles.MOVIE_CREATOR.getName())
                 .anyRequest()
                 .authenticated()
                 .and()

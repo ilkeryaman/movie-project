@@ -14,11 +14,6 @@ movie:
 keycloak:
   auth-server-url: https://lemur-14.cloud-iam.com/auth
   realm: movie-project
-  resource: movie-api
+  resource: movie-app
   bearer-only: true
   use-resource-role-mappings: false
-
-logging:
-  level:
-    org:
-      keycloak: DEBUG
