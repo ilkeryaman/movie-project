@@ -16,7 +16,7 @@ spring-doc:
 
 movie-api:
   rest:
-    uri: localhost:8089/movie-api/movies
+    uri: http://localhost:8089/movie-api/movies
   soap:
     default-uri: http://localhost:8085/movie-api/movies
     context-path: com.eri.generated.movieapi.stub
