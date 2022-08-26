@@ -1,21 +1,29 @@
 package com.eri.service.impl;
 
+import com.eri.constant.enums.CacheKey;
 import com.eri.converter.mapstruct.IMovieMapper;
+import com.eri.exception.CacheNotInitializedException;
 import com.eri.exception.MovieNotFoundException;
 import com.eri.generated.movieapi.stub.*;
 import com.eri.model.Movie;
 import com.eri.service.IMovieManagerService;
+import com.eri.service.cache.ICacheService;
 import com.eri.service.soap.SoapClient;
+import com.eri.util.CacheUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service("movieManagerSoapService")
 public class MovieManagerSoapServiceImpl implements IMovieManagerService {
+
+    @Resource
+    ICacheService cacheService;
 
     @Autowired
     private SoapClient soapClient;
@@ -27,8 +35,17 @@ public class MovieManagerSoapServiceImpl implements IMovieManagerService {
     IMovieMapper movieMapper;
 
     @Override
-    public List<Movie> getMovies() {
-        return listMovies();
+    public List<Movie> getMovies(boolean fromCache) {
+        if(fromCache){
+            List<Movie> cachedMovies = cacheService.findListFromCacheWithKey(CacheKey.MOVIES.getName());
+            if(cachedMovies == null){
+                throw new CacheNotInitializedException();
+            }
+            return cachedMovies;
+        }
+        List<Movie> movies = listMovies();
+        CacheUtil.cacheIfNeeded(cacheService, movies);
+        return movies;
     }
 
     @Override

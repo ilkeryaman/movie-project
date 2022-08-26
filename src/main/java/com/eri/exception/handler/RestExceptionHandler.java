@@ -1,6 +1,7 @@
 package com.eri.exception.handler;
 
 import com.eri.constant.enums.ErrorMessage;
+import com.eri.exception.CacheNotInitializedException;
 import com.eri.exception.MovieNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,5 +22,11 @@ public class RestExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<Object> handleMovieNotFoundExceptions(MovieNotFoundException ex) {
         return new ResponseEntity<>(ErrorMessage.MOVIE_NOT_FOUND.getValue(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(CacheNotInitializedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<Object> handleCacheNotInitializedExceptions(CacheNotInitializedException ex) {
+        return new ResponseEntity<>(ErrorMessage.CACHE_INITIALIZATION_PROBLEM.getValue(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

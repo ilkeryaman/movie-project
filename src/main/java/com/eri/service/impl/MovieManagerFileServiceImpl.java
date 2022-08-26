@@ -1,7 +1,11 @@
 package com.eri.service.impl;
 
+import com.eri.constant.enums.CacheKey;
+import com.eri.exception.CacheNotInitializedException;
 import com.eri.model.Movie;
 import com.eri.service.MovieManagerService;
+import com.eri.service.cache.ICacheService;
+import com.eri.util.CacheUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,6 +21,10 @@ import java.util.List;
 
 @Service("movieManagerFileService")
 public class MovieManagerFileServiceImpl extends MovieManagerService {
+
+    @Resource
+    ICacheService cacheService;
+
     private List<Movie> movies;
 
     @Value("${movie.list.file.url}")
@@ -38,7 +47,27 @@ public class MovieManagerFileServiceImpl extends MovieManagerService {
     }
 
     @Override
-    public List<Movie> getMovies(){
-        return movies;
+    public List<Movie> getMovies(boolean fromCache){
+        return getMovies(fromCache, true);
+    }
+
+    @Override
+    public List<Movie> getMovies() {
+        return getMovies(false, false);
+    }
+
+    public List<Movie> getMovies(boolean fromCache, boolean enableCache){
+        if(fromCache){
+            List<Movie> cachedMovies = cacheService.findListFromCacheWithKey(CacheKey.MOVIES.getName());
+            if(cachedMovies == null){
+                throw new CacheNotInitializedException();
+            }
+            return cachedMovies;
+        } else {
+            if(enableCache){
+                CacheUtil.cacheIfNeeded(cacheService, new ArrayList<>(movies));
+            }
+            return movies;
+        }
     }
 }

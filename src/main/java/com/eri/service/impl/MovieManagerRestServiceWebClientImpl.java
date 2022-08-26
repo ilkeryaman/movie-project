@@ -1,8 +1,12 @@
 package com.eri.service.impl;
 
+import com.eri.constant.enums.CacheKey;
 import com.eri.converter.mapstruct.IMovieRestMapper;
+import com.eri.exception.CacheNotInitializedException;
 import com.eri.model.Movie;
 import com.eri.service.IMovieManagerService;
+import com.eri.service.cache.ICacheService;
+import com.eri.util.CacheUtil;
 import org.apache.http.HttpHeaders;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -17,6 +21,10 @@ import java.util.List;
 
 @Service("movieManagerWebClientService")
 public class MovieManagerRestServiceWebClientImpl implements IMovieManagerService {
+
+    @Resource
+    ICacheService cacheService;
+
     @Resource
     IMovieRestMapper mapper;
 
@@ -35,12 +43,21 @@ public class MovieManagerRestServiceWebClientImpl implements IMovieManagerServic
     WebClient webClient;
 
     @Override
-    public List<Movie> getMovies() {
-        List<Movie> movies = new ArrayList<>();
-        Mono<com.eri.swagger.movie_api.model.Movie[]> movieResponse =
-                webClient.get().uri(getRemoteApiUri()).retrieve().bodyToMono(com.eri.swagger.movie_api.model.Movie[].class);
-        Arrays.asList(movieResponse.block()).forEach(movie -> movies.add(mapper.generatedToModel(movie)));
-        return movies;
+    public List<Movie> getMovies(boolean fromCache) {
+        if(fromCache){
+            List<Movie> cachedMovies = cacheService.findListFromCacheWithKey(CacheKey.MOVIES.getName());
+            if(cachedMovies == null){
+                throw new CacheNotInitializedException();
+            }
+            return cachedMovies;
+        } else {
+            List<Movie> movies = new ArrayList<>();
+            Mono<com.eri.swagger.movie_api.model.Movie[]> movieResponse =
+                    webClient.get().uri(getRemoteApiUri()).retrieve().bodyToMono(com.eri.swagger.movie_api.model.Movie[].class);
+            Arrays.asList(movieResponse.block()).forEach(movie -> movies.add(mapper.generatedToModel(movie)));
+            CacheUtil.cacheIfNeeded(cacheService, movies);
+            return movies;
+        }
     }
 
     @Override

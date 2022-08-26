@@ -29,12 +29,12 @@ public class MovieController {
             @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
     })
     @GetMapping("/movies")
-    public List<Movie> listMovies(@RequestParam(required = false) Integer id){
+    public List<Movie> listMovies(@RequestParam(required = false) Integer id, @RequestParam(required = false) boolean fromCache){
         if(id != null){
             Movie movie = movieManagerService.findMovieById(id);
             return movie == null ? Collections.emptyList() : Arrays.asList(movie);
         }
-        return movieManagerService.getMovies();
+        return movieManagerService.getMovies(fromCache);
     }
 
     @Operation(summary = "Gets movie by id.")

@@ -3,6 +3,7 @@ package com.eri.service;
 import com.eri.exception.MovieNotFoundException;
 import com.eri.model.Movie;
 
+import java.util.List;
 import java.util.Optional;
 
 public abstract class MovieManagerService implements IMovieManagerService {
@@ -26,4 +27,6 @@ public abstract class MovieManagerService implements IMovieManagerService {
     public void removeMovieById(int id) {
         getMovies().removeIf(movie -> movie.getId() == id);
     }
+
+    public abstract List<Movie> getMovies();
 }

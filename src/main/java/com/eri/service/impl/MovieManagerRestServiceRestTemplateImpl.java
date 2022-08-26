@@ -1,8 +1,12 @@
 package com.eri.service.impl;
 
+import com.eri.constant.enums.CacheKey;
 import com.eri.converter.mapstruct.IMovieRestMapper;
+import com.eri.exception.CacheNotInitializedException;
 import com.eri.model.Movie;
 import com.eri.service.IMovieManagerService;
+import com.eri.service.cache.ICacheService;
+import com.eri.util.CacheUtil;
 import com.eri.util.HttpUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -16,6 +20,9 @@ import java.util.List;
 
 @Service("movieManagerRestTemplateService")
 public class MovieManagerRestServiceRestTemplateImpl implements IMovieManagerService {
+
+    @Resource
+    ICacheService cacheService;
 
     @Resource
     IMovieRestMapper mapper;
@@ -35,12 +42,21 @@ public class MovieManagerRestServiceRestTemplateImpl implements IMovieManagerSer
     }
 
     @Override
-    public List<Movie> getMovies() {
-        List<Movie> movies = new ArrayList<>();
-        ResponseEntity<com.eri.swagger.movie_api.model.Movie[]> movieResponse =
-                movieRestTemplate.exchange(getRemoteApiUri(), HttpMethod.GET, HttpUtil.getHttpEntity(), com.eri.swagger.movie_api.model.Movie[].class);
-        Arrays.asList(movieResponse.getBody()).forEach(movie -> movies.add(mapper.generatedToModel(movie)));
-        return movies;
+    public List<Movie> getMovies(boolean fromCache) {
+        if(fromCache){
+            List<Movie> cachedMovies = cacheService.findListFromCacheWithKey(CacheKey.MOVIES.getName());
+            if(cachedMovies == null){
+                throw new CacheNotInitializedException();
+            }
+            return cachedMovies;
+        } else {
+            List<Movie> movies = new ArrayList<>();
+            ResponseEntity<com.eri.swagger.movie_api.model.Movie[]> movieResponse =
+                    movieRestTemplate.exchange(getRemoteApiUri(), HttpMethod.GET, HttpUtil.getHttpEntity(), com.eri.swagger.movie_api.model.Movie[].class);
+            Arrays.asList(movieResponse.getBody()).forEach(movie -> movies.add(mapper.generatedToModel(movie)));
+            CacheUtil.cacheIfNeeded(cacheService, movies);
+            return movies;
+        }
     }
 
     @Override
