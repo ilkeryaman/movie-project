@@ -14,6 +14,14 @@ spring:
           clientSecret: qffqFEOrb8jPgsax7GOaAgfJmBtRu4Ky
           accessTokenUri: https://lemur-14.cloud-iam.com/auth/realms/movie-project/protocol/openid-connect/token
           expireCorrectionInSeconds: 290
+        registration:
+          movie-api:
+            authorization-grant-type: client_credentials
+            client-id: movie-app
+            client-secret: qffqFEOrb8jPgsax7GOaAgfJmBtRu4Ky
+        provider:
+          movie-api:
+            token-uri: https://lemur-14.cloud-iam.com/auth/realms/movie-project/protocol/openid-connect/token
 
 spring-doc:
   packages-to-scan: com.eri.controller

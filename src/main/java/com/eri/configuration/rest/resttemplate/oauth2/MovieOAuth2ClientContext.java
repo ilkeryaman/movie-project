@@ -1,4 +1,4 @@
-package com.eri.configuration.rest.oauth2;
+package com.eri.configuration.rest.resttemplate.oauth2;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;

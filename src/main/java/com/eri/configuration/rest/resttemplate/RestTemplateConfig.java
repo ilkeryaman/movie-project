@@ -1,7 +1,7 @@
-package com.eri.configuration.rest;
+package com.eri.configuration.rest.resttemplate;
 
-import com.eri.configuration.rest.handler.RestTemplateResponseErrorHandler;
-import com.eri.configuration.rest.oauth2.MovieOAuth2ClientContext;
+import com.eri.configuration.rest.resttemplate.handler.RestTemplateResponseErrorHandler;
+import com.eri.configuration.rest.resttemplate.oauth2.MovieOAuth2ClientContext;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -20,7 +20,7 @@ import java.util.List;
 @RequestMapping("/movie-api")
 public class MovieController {
 
-    @Resource(name="movieManagerRestTemplateService")
+    @Resource(name="movieManagerWebClientService")
     IMovieManagerService movieManagerService;
 
     @Operation(summary = "Lists all movies.")

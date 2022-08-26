@@ -1,7 +1,8 @@
 package com.eri.constant.enums;
 
 public enum ErrorMessage {
-    MOVIE_NOT_FOUND("Movie not found!");
+    MOVIE_NOT_FOUND("Movie not found!"),
+    INTERNAL_SERVER_ERROR("Internal server error!");
 
     ErrorMessage(String value) {
         this.value = value;

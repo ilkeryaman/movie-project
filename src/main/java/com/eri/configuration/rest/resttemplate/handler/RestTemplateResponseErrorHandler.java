@@ -1,4 +1,4 @@
-package com.eri.configuration.rest.handler;
+package com.eri.configuration.rest.resttemplate.handler;
 
 import com.eri.exception.MovieNotFoundException;
 import org.slf4j.Logger;
@@ -21,12 +21,10 @@ public class RestTemplateResponseErrorHandler implements ResponseErrorHandler {
     @Override
     public void handleError(ClientHttpResponse clientHttpResponse) throws IOException {
         logger.error("RestTemplate ResponseErrorHandler called with HTTP Status Code: {}", clientHttpResponse.getStatusCode().value());
-
         HttpStatus httpStatus = clientHttpResponse.getStatusCode();
-
-        if (httpStatus.is5xxServerError() && !HttpStatus.SERVICE_UNAVAILABLE.equals(clientHttpResponse.getStatusCode())) {
-            throw new HttpServerErrorException(clientHttpResponse.getStatusCode());
-        } else if (httpStatus.NOT_FOUND.equals(clientHttpResponse.getStatusCode())){
+        if (httpStatus.is5xxServerError() && !HttpStatus.SERVICE_UNAVAILABLE.equals(httpStatus)) {
+            throw new HttpServerErrorException(httpStatus);
+        } else if (httpStatus.NOT_FOUND.equals(httpStatus)){
             throw new MovieNotFoundException();
         }
     }
