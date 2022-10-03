@@ -2,6 +2,8 @@ server:
   port: 8087
 
 spring:
+  config:
+    import: optional:secret.yaml
   mvc:
     pathmatch:
       matching-strategy: ANT_PATH_MATCHER
@@ -10,18 +12,18 @@ spring:
       client:
         movie-api:
           grantType: client_credentials
-          clientId: movie-app
-          clientSecret: qffqFEOrb8jPgsax7GOaAgfJmBtRu4Ky
-          accessTokenUri: https://lemur-14.cloud-iam.com/auth/realms/movie-project/protocol/openid-connect/token
+          #clientId:
+          #clientSecret:
+          #accessTokenUri:
           expireCorrectionInSeconds: 290
         registration:
           movie-api:
             authorization-grant-type: client_credentials
-            client-id: movie-app
-            client-secret: qffqFEOrb8jPgsax7GOaAgfJmBtRu4Ky
-        provider:
-          movie-api:
-            token-uri: https://lemur-14.cloud-iam.com/auth/realms/movie-project/protocol/openid-connect/token
+            #client-id:
+            #client-secret:
+        ##provider:
+          ##movie-api:
+            ##token-uri:
 
 spring-doc:
   packages-to-scan: com.eri.controller
@@ -49,7 +51,7 @@ auth:
     urls: /movie-api/swagger-ui/**, /movie-api/api-docs, /movie-api/api-docs/*, /actuator/**
 
 keycloak:
-  auth-server-url: https://lemur-14.cloud-iam.com/auth
+  ##auth-server-url:
   realm: movie-project
   resource: movie-app
   bearer-only: true

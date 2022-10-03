@@ -24,8 +24,4 @@ This project is for learning Spring Boot Topics.
 ## Links
 [Tutorialspoint - Spring Boot](https://www.tutorialspoint.com/spring_boot/index.htm)\
 [Cloud IAM - Keycloack](https://www.cloud-iam.com/)\
-[Heroku](heroku.com)
-
-## Account
-nsctr2022@protonmail.com\
-nsctr2022@Ericsson
+[ElephantSQL](https://www.elephantsql.com/)
