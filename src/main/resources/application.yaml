@@ -24,6 +24,17 @@ spring:
         ##provider:
           ##movie-api:
             ##token-uri:
+  #datasource:
+    #url:
+    #username:
+    #password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate-dialect: org.hibernate.dialect.PostgreSQLDialect
+      format_sql: true
 
 spring-doc:
   packages-to-scan: com.eri.controller
