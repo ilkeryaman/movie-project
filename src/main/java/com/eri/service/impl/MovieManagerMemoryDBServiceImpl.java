@@ -7,7 +7,6 @@ import com.eri.service.MovieManagerService;
 import com.eri.service.cache.ICacheService;
 import com.eri.service.memorydb.IMovieMemoryDBService;
 import com.eri.util.CacheUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -20,7 +19,7 @@ public class MovieManagerMemoryDBServiceImpl extends MovieManagerService {
     @Resource
     ICacheService cacheService;
 
-    @Autowired
+    @Resource
     IMovieMemoryDBService movieMemoryDBService;
 
     @Override
