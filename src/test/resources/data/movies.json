@@ -1,0 +1,63 @@
+[
+  {
+    "id": 1,
+    "title": "The Matrix",
+    "directors": [
+      {
+        "name": "Lana",
+        "surname": "Wachowski"
+      },
+      {
+        "name": "Lilly",
+        "surname": "Wachowski"
+      }
+    ],
+    "categories": [
+      "action",
+      "sci-fi"
+    ],
+    "stars": [
+      {
+        "name": "Keanu",
+        "surname": "Reeves"
+      },
+      {
+        "name": "Laurence",
+        "surname": "Fishburne"
+      },
+      {
+        "name": "Carrie-Anne",
+        "surname": "Moss"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "The Green Mile",
+    "directors": [
+      {
+        "name": "Frank",
+        "surname": "Darabont"
+      }
+    ],
+    "categories": [
+      "crime",
+      "drama",
+      "fantasy"
+    ],
+    "stars": [
+      {
+        "name": "Tom",
+        "surname": "Hanks"
+      },
+      {
+        "name": "Michael Clarke",
+        "surname": "Duncan"
+      },
+      {
+        "name": "David",
+        "surname": "Morse"
+      }
+    ]
+  }
+]
