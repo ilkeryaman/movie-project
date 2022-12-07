@@ -4,7 +4,6 @@ import com.eri.dal.entity.CategoryEntity;
 import com.eri.dal.entity.DirectorEntity;
 import com.eri.dal.entity.MovieEntity;
 import com.eri.dal.entity.StarEntity;
-import com.eri.model.Director;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;

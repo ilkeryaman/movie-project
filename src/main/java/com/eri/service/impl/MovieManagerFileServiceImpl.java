@@ -38,7 +38,7 @@ public class MovieManagerFileServiceImpl extends MovieManagerService {
     }
 
     @PostConstruct
-    public void afterInitialize(){
+    private void afterInitialize(){
         try {
             movies = objectMapper.readValue(new File(movieFileUrl), new TypeReference<List<Movie>>() {});
         } catch (IOException e) {

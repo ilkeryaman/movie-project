@@ -5,7 +5,6 @@ import com.eri.helper.MovieDataHelper;
 import com.eri.model.Movie;
 import com.eri.service.IMovieManagerService;
 import com.eri.service.impl.MovieManagerDBServiceImpl;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Test;
@@ -13,8 +12,6 @@ import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import javax.annotation.Resource;
-import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
