@@ -32,7 +32,7 @@ public class MovieManagerMemoryDBServiceImpl extends MovieManagerService {
         return getMovies(false, false);
     }
 
-    public List<Movie> getMovies(boolean fromCache, boolean enableCache) {
+    private List<Movie> getMovies(boolean fromCache, boolean enableCache) {
         if(fromCache){
             List<Movie> cachedMovies = cacheService.findListFromCacheWithKey(CacheKey.MOVIES.getName());
             if(cachedMovies == null){

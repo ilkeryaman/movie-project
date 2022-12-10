@@ -24,25 +24,25 @@ import java.util.List;
 
 public class MovieManagerDBServiceImplTest extends MovieProjectJUnitTestBase {
     @Resource
-    MovieDataHelper dataHelper;
+    private MovieDataHelper dataHelper;
 
     @Resource
-    MovieEntityDataHelper entityDataHelper;
+    private MovieEntityDataHelper entityDataHelper;
 
     @Resource(name = "movieManagerDBService")
-    IMovieManagerService movieManagerService;
+    private IMovieManagerService movieManagerService;
 
     @Resource
-    MovieEntityToMovieMapper movieEntityToMovieMapper;
+    private MovieEntityToMovieMapper movieEntityToMovieMapper;
 
     @Resource
-    MovieToMovieEntityMapper movieToMovieEntityMapper;
+    private MovieToMovieEntityMapper movieToMovieEntityMapper;
 
     @MockBean
-    IMovieService movieService;
+    private IMovieService movieService;
 
     @MockBean
-    ICacheService cacheService;
+    private ICacheService cacheService;
 
     //region getMovies
     @Test
