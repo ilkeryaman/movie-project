@@ -1,5 +1,6 @@
 package com.eri.helper;
 
+import com.eri.constant.enums.Category;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
@@ -33,7 +34,7 @@ public class MovieRestDataHelper {
         com.eri.swagger.movie_api.model.Movie movie = new com.eri.swagger.movie_api.model.Movie();
         movie.setId(110);
         movie.setTitle("The Test");
-        movie.setCategories(Arrays.asList("drama", "action"));
+        movie.setCategories(Arrays.asList(Category.ACTION.getName(), Category.DRAMA.getName()));
         movie.setDirectors(directors);
         movie.setStars(stars);
         return movie;

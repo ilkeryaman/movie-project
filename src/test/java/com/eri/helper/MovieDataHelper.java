@@ -1,5 +1,6 @@
 package com.eri.helper;
 
+import com.eri.constant.enums.Category;
 import com.eri.model.Director;
 import com.eri.model.Movie;
 import com.eri.model.Star;
@@ -29,7 +30,7 @@ public class MovieDataHelper {
         Movie movie = new Movie();
         movie.setId(110);
         movie.setTitle("The Test");
-        movie.setCategories(Arrays.asList("drama", "action"));
+        movie.setCategories(Arrays.asList(Category.ACTION.getName(), Category.DRAMA.getName()));
         movie.setDirectors(directors);
         movie.setStars(stars);
         return movie;

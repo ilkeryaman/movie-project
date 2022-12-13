@@ -5,7 +5,6 @@ import com.eri.helper.MovieDataHelper;
 import com.eri.model.Movie;
 import com.eri.service.IMovieManagerService;
 import com.eri.service.impl.MovieManagerDBServiceImpl;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -25,46 +24,42 @@ public class MovieControllerTest extends MovieProjectJUnitTestBase {
     MovieController movieController;
 
     @MockBean(MovieManagerDBServiceImpl.class)
-    IMovieManagerService movieManagerService;
-
-    @Resource
-    private ObjectMapper objectMapper;
-
+    IMovieManagerService movieManagerServiceMock;
 
     //region listMovies
     @Test
     public void listMoviesWithoutIdTest(){
         boolean fromCache = false;
         List<Movie> moviesExpected = dataHelper.getExpectedMovieList(fromCache);
-        Mockito.when(movieManagerService.getMovies(fromCache)).thenReturn(moviesExpected);
-        List<Movie> listMovieResponse = movieController.listMovies(null, fromCache);
-        Assert.assertEquals(moviesExpected, listMovieResponse);
+        Mockito.when(movieManagerServiceMock.getMovies(fromCache)).thenReturn(moviesExpected);
+        List<Movie> moviesActual = movieController.listMovies(null, fromCache);
+        Assert.assertEquals(moviesExpected, moviesActual);
     }
 
     @Test
     public void listMoviesWithoutIdFromCacheTest(){
         boolean fromCache = true;
         List<Movie> moviesExpected = dataHelper.getExpectedMovieList(fromCache);
-        Mockito.when(movieManagerService.getMovies(fromCache)).thenReturn(moviesExpected);
-        List<Movie> listMovieResponse = movieController.listMovies(null, fromCache);
-        Assert.assertEquals(moviesExpected, listMovieResponse);
+        Mockito.when(movieManagerServiceMock.getMovies(fromCache)).thenReturn(moviesExpected);
+        List<Movie> moviesActual = movieController.listMovies(null, fromCache);
+        Assert.assertEquals(moviesExpected, moviesActual);
     }
 
     @Test
     public void listMoviesWithIdTest(){
         Movie movie = dataHelper.getExpectedMovie();
         List<Movie> moviesExpected = Arrays.asList(movie);
-        Mockito.when(movieManagerService.findMovieById(Mockito.anyInt())).thenReturn(movie);
-        List<Movie> listMovieResponse = movieController.listMovies(1, false);
-        Assert.assertEquals(moviesExpected, listMovieResponse);
+        Mockito.when(movieManagerServiceMock.findMovieById(Mockito.anyInt())).thenReturn(movie);
+        List<Movie> moviesActual = movieController.listMovies(1, false);
+        Assert.assertEquals(moviesExpected, moviesActual);
     }
 
     @Test
     public void listMoviesWithIdNullTest(){
         List<Movie> moviesExpected = Collections.emptyList();
-        Mockito.when(movieManagerService.findMovieById(Mockito.anyInt())).thenReturn(null);
-        List<Movie> listMovieResponse = movieController.listMovies(1, false);
-        Assert.assertEquals(moviesExpected, listMovieResponse);
+        Mockito.when(movieManagerServiceMock.findMovieById(Mockito.anyInt())).thenReturn(null);
+        List<Movie> moviesActual = movieController.listMovies(1, false);
+        Assert.assertEquals(moviesExpected, moviesActual);
     }
     //endregion listMovies
 
@@ -73,16 +68,16 @@ public class MovieControllerTest extends MovieProjectJUnitTestBase {
     @Test
     public void getMoviesTest(){
         Movie movieExpected = dataHelper.getExpectedMovie();
-        Mockito.when(movieManagerService.findMovieById(Mockito.anyInt())).thenReturn(movieExpected);
-        Movie getMovieResponse = movieController.getMovie(1);
-        Assert.assertEquals(movieExpected, getMovieResponse);
+        Mockito.when(movieManagerServiceMock.findMovieById(Mockito.anyInt())).thenReturn(movieExpected);
+        Movie movieActual = movieController.getMovie(1);
+        Assert.assertEquals(movieExpected, movieActual);
     }
     //endregion getMovies
 
     //region addMovie
     @Test
     public void addMovieTest() {
-        Mockito.doNothing().when(movieManagerService).addMovie(Mockito.any(Movie.class));
+        Mockito.doNothing().when(movieManagerServiceMock).addMovie(Mockito.any(Movie.class));
         movieController.addMovie(dataHelper.getExpectedMovie());
     }
     //endregion addMovie
@@ -90,7 +85,7 @@ public class MovieControllerTest extends MovieProjectJUnitTestBase {
     //region addMovie
     @Test
     public void deleteMovieTest() {
-        Mockito.doNothing().when(movieManagerService).removeMovieById(Mockito.anyInt());
+        Mockito.doNothing().when(movieManagerServiceMock).removeMovieById(Mockito.anyInt());
         movieController.deleteMovie(1);
     }
     //endregion addMovie

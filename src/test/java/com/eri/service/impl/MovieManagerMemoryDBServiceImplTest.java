@@ -25,34 +25,34 @@ public class MovieManagerMemoryDBServiceImplTest extends MovieProjectJUnitTestBa
     private MovieDataHelper dataHelper;
 
     @MockBean
-    private IMovieMemoryDBService movieMemoryDBService;
+    private IMovieMemoryDBService movieMemoryDBServiceMock;
 
     @MockBean
-    private ICacheService cacheService;
+    private ICacheService cacheServiceMock;
 
     //region getMovies
     @Test
     public void getMoviesTest(){
         boolean fromCache = false;
         List<Movie> moviesExpected = dataHelper.getExpectedMovieList(fromCache);
-        Mockito.when(movieMemoryDBService.getMovies()).thenReturn(moviesExpected);
-        List<Movie> moviesReturned = movieManagerService.getMovies(fromCache);
-        Assert.assertEquals(moviesExpected, moviesReturned);
+        Mockito.when(movieMemoryDBServiceMock.getMovies()).thenReturn(moviesExpected);
+        List<Movie> moviesActual = movieManagerService.getMovies(fromCache);
+        Assert.assertEquals(moviesExpected, moviesActual);
     }
 
     @Test
     public void getMoviesWithCacheTest(){
         boolean fromCache = true;
         List<Movie> moviesExpected = dataHelper.getExpectedMovieList(fromCache);
-        Mockito.doReturn(moviesExpected).when(cacheService).findListFromCacheWithKey(CacheKey.MOVIES.getName());
-        List<Movie> moviesReturned = movieManagerService.getMovies(fromCache);
-        Assert.assertEquals(moviesExpected, moviesReturned);
+        Mockito.doReturn(moviesExpected).when(cacheServiceMock).findListFromCacheWithKey(CacheKey.MOVIES.getName());
+        List<Movie> moviesActual = movieManagerService.getMovies(fromCache);
+        Assert.assertEquals(moviesExpected, moviesActual);
     }
 
     @Test(expected = CacheNotInitializedException.class)
     public void getMoviesWithNullCacheTest(){
         boolean fromCache = true;
-        Mockito.when(cacheService.findListFromCacheWithKey(CacheKey.MOVIES.getName())).thenReturn(null);
+        Mockito.when(cacheServiceMock.findListFromCacheWithKey(CacheKey.MOVIES.getName())).thenReturn(null);
         movieManagerService.getMovies(fromCache);
     }
     //endregion getMovies
@@ -62,18 +62,18 @@ public class MovieManagerMemoryDBServiceImplTest extends MovieProjectJUnitTestBa
     public void findMovieByIdTest(){
         boolean fromCache = false;
         int id = 1;
-        List<Movie> moviesExpected = dataHelper.getExpectedMovieList(fromCache);
-        Movie movieExpected = moviesExpected.stream().filter(movie -> movie.getId() == id).findFirst().get();
-        Mockito.when(movieMemoryDBService.getMovies()).thenReturn(moviesExpected);
-        Movie movieFound = movieManagerService.findMovieById(id);
-        Assert.assertEquals(movieExpected, movieFound);
+        List<Movie> moviesList = dataHelper.getExpectedMovieList(fromCache);
+        Movie movieExpected = moviesList.stream().filter(movie -> movie.getId() == id).findFirst().get();
+        Mockito.when(movieMemoryDBServiceMock.getMovies()).thenReturn(moviesList);
+        Movie movieActual = movieManagerService.findMovieById(id);
+        Assert.assertEquals(movieExpected, movieActual);
     }
 
     @Test(expected = MovieNotFoundException.class)
     public void findMovieByIdMovieNotFoundTest(){
         boolean fromCache = false;
-        List<Movie> moviesExpected = dataHelper.getExpectedMovieList(fromCache);
-        Mockito.when(movieMemoryDBService.getMovies()).thenReturn(moviesExpected);
+        List<Movie> moviesList = dataHelper.getExpectedMovieList(fromCache);
+        Mockito.when(movieMemoryDBServiceMock.getMovies()).thenReturn(moviesList);
         movieManagerService.findMovieById(1200);
     }
     //endregion findMovieById
@@ -84,7 +84,7 @@ public class MovieManagerMemoryDBServiceImplTest extends MovieProjectJUnitTestBa
         boolean fromCache = false;
         List<Movie> moviesExpected = dataHelper.getExpectedMovieList(fromCache);
         int initialCount = moviesExpected.size();
-        Mockito.when(movieMemoryDBService.getMovies()).thenReturn(moviesExpected);
+        Mockito.when(movieMemoryDBServiceMock.getMovies()).thenReturn(moviesExpected);
         movieManagerService.addMovie(dataHelper.getExpectedMovie());
         Assert.assertEquals(initialCount + 1, moviesExpected.size());
     }
@@ -97,7 +97,7 @@ public class MovieManagerMemoryDBServiceImplTest extends MovieProjectJUnitTestBa
         int id = 1;
         List<Movie> moviesExpected = dataHelper.getExpectedMovieList(fromCache);
         Assert.assertTrue(moviesExpected.stream().filter((movie -> movie.getId() == id)).findFirst().isPresent());
-        Mockito.when(movieMemoryDBService.getMovies()).thenReturn(moviesExpected);
+        Mockito.when(movieMemoryDBServiceMock.getMovies()).thenReturn(moviesExpected);
         movieManagerService.removeMovieById(id);
         Assert.assertFalse(moviesExpected.stream().filter((movie -> movie.getId() == id)).findFirst().isPresent());
     }

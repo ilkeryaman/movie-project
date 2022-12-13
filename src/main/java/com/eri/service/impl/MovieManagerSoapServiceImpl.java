@@ -68,7 +68,7 @@ public class MovieManagerSoapServiceImpl implements IMovieManagerService {
     public void removeMovieById(int id) {
         DeleteMovieRequest deleteMovieRequest = new DeleteMovieRequest();
         deleteMovieRequest.setId(BigInteger.valueOf(id));
-        soapClient.addMovie(url, deleteMovieRequest);
+        soapClient.deleteMovie(url, deleteMovieRequest);
     }
 
     private List<Movie> listMovies(){

@@ -39,10 +39,10 @@ public class MovieManagerDBServiceImplTest extends MovieProjectJUnitTestBase {
     private MovieToMovieEntityMapper movieToMovieEntityMapper;
 
     @MockBean
-    private IMovieService movieService;
+    private IMovieService movieServiceMock;
 
     @MockBean
-    private ICacheService cacheService;
+    private ICacheService cacheServiceMock;
 
     //region getMovies
     @Test
@@ -51,42 +51,42 @@ public class MovieManagerDBServiceImplTest extends MovieProjectJUnitTestBase {
         List<MovieEntity> movieEntityListExpected = entityDataHelper.getExpectedMovieEntityList();
         List<Movie> moviesExpected = new ArrayList<>();
         movieEntityListExpected.forEach(movieEntity -> moviesExpected.add(movieEntityToMovieMapper.mapMovieEntityToMovie(movieEntity)));
-        Mockito.when(movieService.getMovieList()).thenReturn(movieEntityListExpected);
-        List<Movie> listMovieResponse = movieManagerService.getMovies(fromCache);
-        Assert.assertTrue(moviesExpected.size() == listMovieResponse.size());
-        Assert.assertEquals(moviesExpected.get(0).getId(), listMovieResponse.get(0).getId());
-        Assert.assertEquals(moviesExpected.get(0).getTitle(), listMovieResponse.get(0).getTitle());
-        Assert.assertTrue(moviesExpected.get(0).getCategories().size() == listMovieResponse.get(0).getCategories().size());
-        Assert.assertEquals(moviesExpected.get(0).getCategories().get(0), listMovieResponse.get(0).getCategories().get(0));
-        Assert.assertTrue(moviesExpected.get(0).getDirectors().size() == listMovieResponse.get(0).getDirectors().size());
-        Assert.assertEquals(moviesExpected.get(0).getDirectors().get(0).getName(), listMovieResponse.get(0).getDirectors().get(0).getName());
-        Assert.assertEquals(moviesExpected.get(0).getDirectors().get(0).getSurname(), listMovieResponse.get(0).getDirectors().get(0).getSurname());
-        Assert.assertTrue(moviesExpected.get(0).getStars().size() == listMovieResponse.get(0).getStars().size());
-        Assert.assertEquals(moviesExpected.get(0).getStars().get(0).getName(), listMovieResponse.get(0).getStars().get(0).getName());
-        Assert.assertEquals(moviesExpected.get(0).getStars().get(0).getSurname(), listMovieResponse.get(0).getStars().get(0).getSurname());
+        Mockito.when(movieServiceMock.getMovieList()).thenReturn(movieEntityListExpected);
+        List<Movie> moviesActual = movieManagerService.getMovies(fromCache);
+        Assert.assertTrue(moviesExpected.size() == moviesActual.size());
+        Assert.assertEquals(moviesExpected.get(0).getId(), moviesActual.get(0).getId());
+        Assert.assertEquals(moviesExpected.get(0).getTitle(), moviesActual.get(0).getTitle());
+        Assert.assertTrue(moviesExpected.get(0).getCategories().size() == moviesActual.get(0).getCategories().size());
+        Assert.assertEquals(moviesExpected.get(0).getCategories().get(0), moviesActual.get(0).getCategories().get(0));
+        Assert.assertTrue(moviesExpected.get(0).getDirectors().size() == moviesActual.get(0).getDirectors().size());
+        Assert.assertEquals(moviesExpected.get(0).getDirectors().get(0).getName(), moviesActual.get(0).getDirectors().get(0).getName());
+        Assert.assertEquals(moviesExpected.get(0).getDirectors().get(0).getSurname(), moviesActual.get(0).getDirectors().get(0).getSurname());
+        Assert.assertTrue(moviesExpected.get(0).getStars().size() == moviesActual.get(0).getStars().size());
+        Assert.assertEquals(moviesExpected.get(0).getStars().get(0).getName(), moviesActual.get(0).getStars().get(0).getName());
+        Assert.assertEquals(moviesExpected.get(0).getStars().get(0).getSurname(), moviesActual.get(0).getStars().get(0).getSurname());
     }
 
     @Test
     public void getMoviesMovieEntityNullTest(){
         boolean fromCache = false;
-        Mockito.when(movieService.getMovieList()).thenReturn(null);
-        List<Movie> listMovieResponse = movieManagerService.getMovies(fromCache);
-        Assert.assertEquals(Collections.emptyList(), listMovieResponse);
+        Mockito.when(movieServiceMock.getMovieList()).thenReturn(null);
+        List<Movie> moviesActual = movieManagerService.getMovies(fromCache);
+        Assert.assertEquals(Collections.emptyList(), moviesActual);
     }
 
     @Test
     public void getMoviesFromCacheTest(){
         boolean fromCache = true;
         List<Movie> moviesExpected = dataHelper.getExpectedMovieList(fromCache);
-        Mockito.doReturn(moviesExpected).when(cacheService).findListFromCacheWithKey(CacheKey.MOVIES.getName());
-        List<Movie> listMovieResponse = movieManagerService.getMovies(fromCache);
-        Assert.assertEquals(moviesExpected, listMovieResponse);
+        Mockito.doReturn(moviesExpected).when(cacheServiceMock).findListFromCacheWithKey(CacheKey.MOVIES.getName());
+        List<Movie> moviesActual = movieManagerService.getMovies(fromCache);
+        Assert.assertEquals(moviesExpected, moviesActual);
     }
 
     @Test(expected = CacheNotInitializedException.class)
     public void getMoviesTestFromNullCache(){
         boolean fromCache = true;
-        Mockito.when(cacheService.findListFromCacheWithKey(CacheKey.MOVIES.getName())).thenReturn(null);
+        Mockito.when(cacheServiceMock.findListFromCacheWithKey(CacheKey.MOVIES.getName())).thenReturn(null);
         movieManagerService.getMovies(fromCache);
     }
     //endregion
@@ -96,32 +96,32 @@ public class MovieManagerDBServiceImplTest extends MovieProjectJUnitTestBase {
     public void findMovieByIdTest(){
         MovieEntity movieEntityExpected = entityDataHelper.getExpectedMovieEntity();
         Movie movieExpected = movieEntityToMovieMapper.mapMovieEntityToMovie(movieEntityExpected);
-        Mockito.when(movieService.getMovieById(Mockito.anyLong())).thenReturn(movieEntityExpected);
-        Movie movieFound = movieManagerService.findMovieById(1);
-        Assert.assertEquals(movieExpected.getId(), movieFound.getId());
-        Assert.assertEquals(movieExpected.getTitle(), movieFound.getTitle());
-        Assert.assertTrue(movieExpected.getCategories().size() == movieFound.getCategories().size());
-        Assert.assertEquals(movieExpected.getCategories().get(0), movieFound.getCategories().get(0));
-        Assert.assertTrue(movieExpected.getDirectors().size() == movieFound.getDirectors().size());
-        Assert.assertEquals(movieExpected.getDirectors().get(0).getName(), movieFound.getDirectors().get(0).getName());
-        Assert.assertEquals(movieExpected.getDirectors().get(0).getSurname(), movieFound.getDirectors().get(0).getSurname());
-        Assert.assertTrue(movieExpected.getStars().size() == movieFound.getStars().size());
-        Assert.assertEquals(movieExpected.getStars().get(0).getName(), movieFound.getStars().get(0).getName());
-        Assert.assertEquals(movieExpected.getStars().get(0).getSurname(), movieFound.getStars().get(0).getSurname());
+        Mockito.when(movieServiceMock.getMovieById(Mockito.anyLong())).thenReturn(movieEntityExpected);
+        Movie movieActual = movieManagerService.findMovieById(1);
+        Assert.assertEquals(movieExpected.getId(), movieActual.getId());
+        Assert.assertEquals(movieExpected.getTitle(), movieActual.getTitle());
+        Assert.assertTrue(movieExpected.getCategories().size() == movieActual.getCategories().size());
+        Assert.assertEquals(movieExpected.getCategories().get(0), movieActual.getCategories().get(0));
+        Assert.assertTrue(movieExpected.getDirectors().size() == movieActual.getDirectors().size());
+        Assert.assertEquals(movieExpected.getDirectors().get(0).getName(), movieActual.getDirectors().get(0).getName());
+        Assert.assertEquals(movieExpected.getDirectors().get(0).getSurname(), movieActual.getDirectors().get(0).getSurname());
+        Assert.assertTrue(movieExpected.getStars().size() == movieActual.getStars().size());
+        Assert.assertEquals(movieExpected.getStars().get(0).getName(), movieActual.getStars().get(0).getName());
+        Assert.assertEquals(movieExpected.getStars().get(0).getSurname(), movieActual.getStars().get(0).getSurname());
     }
 
     @Test
     public void findMovieByIdMovieEntityNullTest(){
-        Mockito.when(movieService.getMovieById(Mockito.anyLong())).thenReturn(null);
-        Movie movieFound = movieManagerService.findMovieById(1);
-        Assert.assertNull(movieFound);
+        Mockito.when(movieServiceMock.getMovieById(Mockito.anyLong())).thenReturn(null);
+        Movie movieActual = movieManagerService.findMovieById(1200);
+        Assert.assertNull(movieActual);
     }
     //endregion findMovieById
 
     //region addMovie
     @Test
     public void addMovieTest(){
-        Mockito.when(movieService.saveMovie(Mockito.any(MovieEntity.class))).thenReturn(null);
+        Mockito.when(movieServiceMock.saveMovie(Mockito.any(MovieEntity.class))).thenReturn(null);
         movieManagerService.addMovie(dataHelper.getExpectedMovie());
     }
     //endregion addMovie
@@ -129,7 +129,7 @@ public class MovieManagerDBServiceImplTest extends MovieProjectJUnitTestBase {
     //region removeMovieById
     @Test
     public void deleteMovieTest(){
-        Mockito.doNothing().when(movieService).deleteMovie(Mockito.anyLong());
+        Mockito.doNothing().when(movieServiceMock).deleteMovie(Mockito.anyLong());
         movieManagerService.removeMovieById(1);
     }
     //endregion removeMovieById
