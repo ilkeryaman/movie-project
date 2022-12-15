@@ -1,62 +1,42 @@
 [
   {
     "id": 1,
-    "title": "The Matrix",
-    "directors": [
-      {
-        "name": "Lana",
-        "surname": "Wachowski"
-      },
-      {
-        "name": "Lilly",
-        "surname": "Wachowski"
-      }
-    ],
+    "title": "The Test 1",
     "categories": [
       "action",
       "sci-fi"
     ],
+    "directors": [
+      {
+        "name": "Name of director",
+        "surname": "Surname of director"
+      }
+    ],
     "stars": [
       {
-        "name": "Keanu",
-        "surname": "Reeves"
-      },
-      {
-        "name": "Laurence",
-        "surname": "Fishburne"
-      },
-      {
-        "name": "Carrie-Anne",
-        "surname": "Moss"
+        "name": "Name of star",
+        "surname": "Surname of star"
       }
     ]
   },
   {
     "id": 2,
-    "title": "The Green Mile",
-    "directors": [
-      {
-        "name": "Frank",
-        "surname": "Darabont"
-      }
-    ],
+    "title": "The Test 2",
     "categories": [
       "crime",
       "drama",
       "fantasy"
     ],
+    "directors": [
+      {
+        "name": "Name of director",
+        "surname": "Surname of director"
+      }
+    ],
     "stars": [
       {
-        "name": "Tom",
-        "surname": "Hanks"
-      },
-      {
-        "name": "Michael Clarke",
-        "surname": "Duncan"
-      },
-      {
-        "name": "David",
-        "surname": "Morse"
+        "name": "Name of star",
+        "surname": "Surname of star"
       }
     ]
   }

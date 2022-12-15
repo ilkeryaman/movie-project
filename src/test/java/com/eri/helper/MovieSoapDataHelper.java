@@ -1,53 +1,33 @@
 package com.eri.helper;
 
-import com.eri.constant.enums.Category;
 import com.eri.generated.movieapi.stub.ListMoviesResponse;
-import org.springframework.stereotype.Component;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.math.BigInteger;
-import java.util.Arrays;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
-@Component
-public class MovieSoapDataHelper {
+public class MovieSoapDataHelper extends DataHelper<com.eri.generated.movieapi.stub.Movie> {
 
-    public com.eri.generated.movieapi.stub.Movie getExpectedMovie(){
-        com.eri.generated.movieapi.stub.Director director = new com.eri.generated.movieapi.stub.Director();
-        director.setName("Name of director");
-        director.setSurname("Surname of director");
-        com.eri.generated.movieapi.stub.Star star = new com.eri.generated.movieapi.stub.Star();
-        star.setName("Name of star");
-        star.setSurname("Surname of star");
-
-        com.eri.generated.movieapi.stub.Movie movie = new com.eri.generated.movieapi.stub.Movie();
-        movie.setId(BigInteger.valueOf(110L));
-        movie.setTitle("The Test");
-        movie.getCategories().addAll(Arrays.asList(Category.ACTION.getName(), Category.DRAMA.getName()));
-        movie.getDirectors().addAll(Arrays.asList(director));
-        movie.getStars().addAll(Arrays.asList(star));
-        return movie;
+    void setMovies(){
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            movies = objectMapper.readValue(new File(pathName), new TypeReference<List<com.eri.generated.movieapi.stub.Movie>>() {});
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public ListMoviesResponse getExpectedMovieList(){
+    public ListMoviesResponse getMovieResponse(){
         ListMoviesResponse response = new ListMoviesResponse();
-        response.getMovies().addAll(Arrays.asList(getAMovie(1), getAMovie(2)));
+        response.getMovies().add(getMovie());
         return response;
     }
 
-    private com.eri.generated.movieapi.stub.Movie getAMovie(int someId){
-        com.eri.generated.movieapi.stub.Director director = new com.eri.generated.movieapi.stub.Director();
-        director.setName("Name of director " + someId);
-        director.setSurname("Surname of director " + someId);
-        com.eri.generated.movieapi.stub.Star star = new com.eri.generated.movieapi.stub.Star();
-        star.setName("Name of star " + star);
-        star.setSurname("Surname of star " + star);
-
-        com.eri.generated.movieapi.stub.Movie movie = new com.eri.generated.movieapi.stub.Movie();
-        movie.setId(BigInteger.valueOf(someId));
-        movie.setTitle("The Test");
-        movie.getCategories().addAll(Arrays.asList(Category.ACTION.getName(), Category.DRAMA.getName()));
-        movie.getDirectors().addAll(Arrays.asList(director));
-        movie.getStars().addAll(Arrays.asList(star));
-        return movie;
+    public ListMoviesResponse getMovieListResponse(){
+        ListMoviesResponse response = new ListMoviesResponse();
+        response.getMovies().addAll(getMovieList());
+        return response;
     }
-
 }

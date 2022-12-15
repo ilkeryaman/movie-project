@@ -1,40 +1,45 @@
 package com.eri.service.impl;
 
-import com.eri.base.MovieProjectJUnitTestBase;
 import com.eri.constant.enums.CacheKey;
+import com.eri.converter.mapstruct.IMovieRestMapper;
 import com.eri.exception.CacheNotInitializedException;
 import com.eri.helper.MovieDataHelper;
 import com.eri.helper.MovieRestDataHelper;
 import com.eri.model.Movie;
-import com.eri.service.IMovieManagerService;
 import com.eri.service.cache.ICacheService;
 import org.apache.http.HttpHeaders;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.junit.runner.RunWith;
+import org.mockito.*;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import javax.annotation.Resource;
 import java.util.List;
 
-public class MovieManagerRestServiceWebClientImplTest extends MovieProjectJUnitTestBase {
-    @Resource
-    MovieDataHelper dataHelper;
+@RunWith(MockitoJUnitRunner.class)
+public class MovieManagerRestServiceWebClientImplTest {
+    @InjectMocks
+    MovieManagerRestServiceWebClientImpl movieManagerRestServiceWebClient;
 
-    @Resource
-    MovieRestDataHelper restDataHelper;
+    /*
+    // I do not know why I have to use a captor to mock RestTemplate.exchange
+    // but without it, Mockito is not mocking RestTemplate.exchange.
+    */
+    @Captor
+    private ArgumentCaptor<Object> argumentCaptor;
 
-    @Resource(name = "movieManagerWebClientService")
-    IMovieManagerService movieManagerService;
-
-    @MockBean
+    //region mocks
+    @Mock
     ICacheService cacheServiceMock;
 
-    @MockBean
+    @Mock
+    IMovieRestMapper restMapper;
+
+    @Mock
     WebClient webClientMock;
 
     @Mock
@@ -51,88 +56,123 @@ public class MovieManagerRestServiceWebClientImplTest extends MovieProjectJUnitT
 
     @Mock
     WebClient.ResponseSpec responseSpecMock;
+    //endregion mocks
+
+    //region fields
+    MovieDataHelper dataHelper;
+
+    MovieRestDataHelper restDataHelper;
+
+    private List<com.eri.swagger.movie_api.model.Movie> movieRestList;
+
+    private List<Movie> movieList;
+    //endregion fields
+
+    @Before
+    public void init(){
+        dataHelper = new MovieDataHelper();
+        restDataHelper = new MovieRestDataHelper();
+        movieList = dataHelper.getMovieList();
+        movieRestList = restDataHelper.getMovieList();
+    }
 
     //region getMovies
     @Test
     public void getMoviesTest(){
         boolean fromCache = false;
-        List<com.eri.swagger.movie_api.model.Movie> moviesExpected = restDataHelper.getExpectedMovieList(fromCache);
+        // mocking
         Mockito.when(webClientMock.get()).thenReturn(requestHeadersUriSpecMock);
-        Mockito.when(requestHeadersUriSpecMock.uri(Mockito.anyString())).thenReturn(requestHeadersSpecMock);
+        Mockito.when(requestHeadersUriSpecMock.uri((String) argumentCaptor.capture())).thenReturn(requestHeadersSpecMock);
         Mockito.when(requestHeadersSpecMock.retrieve()).thenReturn(responseSpecMock);
-        Mockito.when(responseSpecMock.bodyToMono(com.eri.swagger.movie_api.model.Movie[].class)).thenReturn(Mono.just(moviesExpected.toArray(new com.eri.swagger.movie_api.model.Movie[0])));
-        List<Movie> moviesActual = movieManagerService.getMovies(fromCache);
-        Assert.assertEquals(moviesExpected.size(), moviesActual.size());
-        Assert.assertEquals(moviesExpected.get(0).getId().intValue(), moviesActual.get(0).getId());
-        Assert.assertEquals(moviesExpected.get(0).getTitle(), moviesActual.get(0).getTitle());
-        Assert.assertEquals(moviesExpected.get(0).getCategories().size(), moviesActual.get(0).getCategories().size());
-        Assert.assertEquals(moviesExpected.get(0).getCategories().get(0), moviesActual.get(0).getCategories().get(0));
-        Assert.assertEquals(moviesExpected.get(0).getCategories().get(1), moviesActual.get(0).getCategories().get(1));
-        Assert.assertEquals(moviesExpected.get(0).getDirectors().size(), moviesActual.get(0).getDirectors().size());
-        Assert.assertEquals(moviesExpected.get(0).getDirectors().get(0).getName(), moviesActual.get(0).getDirectors().get(0).getName());
-        Assert.assertEquals(moviesExpected.get(0).getDirectors().get(0).getSurname(), moviesActual.get(0).getDirectors().get(0).getSurname());
-        Assert.assertEquals(moviesExpected.get(0).getStars().size(), moviesActual.get(0).getStars().size());
-        Assert.assertEquals(moviesExpected.get(0).getStars().get(0).getName(), moviesActual.get(0).getStars().get(0).getName());
-        Assert.assertEquals(moviesExpected.get(0).getStars().get(0).getSurname(), moviesActual.get(0).getStars().get(0).getSurname());
-        Assert.assertEquals(moviesExpected.get(1).getId().intValue(), moviesActual.get(1).getId());
-        Assert.assertEquals(moviesExpected.get(1).getTitle(), moviesActual.get(1).getTitle());
-        Assert.assertEquals(moviesExpected.get(1).getCategories().size(), moviesActual.get(1).getCategories().size());
-        Assert.assertEquals(moviesExpected.get(1).getCategories().get(0), moviesActual.get(1).getCategories().get(0));
-        Assert.assertEquals(moviesExpected.get(1).getCategories().get(1), moviesActual.get(1).getCategories().get(1));
-        Assert.assertEquals(moviesExpected.get(1).getDirectors().size(), moviesActual.get(1).getDirectors().size());
-        Assert.assertEquals(moviesExpected.get(1).getDirectors().get(0).getName(), moviesActual.get(1).getDirectors().get(0).getName());
-        Assert.assertEquals(moviesExpected.get(1).getDirectors().get(0).getSurname(), moviesActual.get(1).getDirectors().get(0).getSurname());
-        Assert.assertEquals(moviesExpected.get(1).getStars().size(), moviesActual.get(1).getStars().size());
-        Assert.assertEquals(moviesExpected.get(1).getStars().get(0).getName(), moviesActual.get(1).getStars().get(0).getName());
-        Assert.assertEquals(moviesExpected.get(1).getStars().get(0).getSurname(), moviesActual.get(1).getStars().get(0).getSurname());
+        Mockito.when(responseSpecMock.bodyToMono(com.eri.swagger.movie_api.model.Movie[].class)).thenReturn(Mono.just(movieRestList.toArray(new com.eri.swagger.movie_api.model.Movie[0])));
+        Mockito.when(restMapper.generatedToModel(movieRestList.get(0))).thenReturn(movieList.get(0));
+        Mockito.when(restMapper.generatedToModel(movieRestList.get(1))).thenReturn(movieList.get(1));
+        // actual method call
+        List<Movie> moviesActual = movieManagerRestServiceWebClient.getMovies(fromCache);
+        // assertions
+        Assert.assertEquals(movieList.size(), moviesActual.size());
+        Assert.assertEquals(movieList.get(0).getId(), moviesActual.get(0).getId());
+        Assert.assertEquals(movieList.get(0).getTitle(), moviesActual.get(0).getTitle());
+        Assert.assertEquals(movieList.get(0).getCategories().size(), moviesActual.get(0).getCategories().size());
+        Assert.assertEquals(movieList.get(0).getCategories().get(0), moviesActual.get(0).getCategories().get(0));
+        Assert.assertEquals(movieList.get(0).getCategories().get(1), moviesActual.get(0).getCategories().get(1));
+        Assert.assertEquals(movieList.get(0).getDirectors().size(), moviesActual.get(0).getDirectors().size());
+        Assert.assertEquals(movieList.get(0).getDirectors().get(0).getName(), moviesActual.get(0).getDirectors().get(0).getName());
+        Assert.assertEquals(movieList.get(0).getDirectors().get(0).getSurname(), moviesActual.get(0).getDirectors().get(0).getSurname());
+        Assert.assertEquals(movieList.get(0).getStars().size(), moviesActual.get(0).getStars().size());
+        Assert.assertEquals(movieList.get(0).getStars().get(0).getName(), moviesActual.get(0).getStars().get(0).getName());
+        Assert.assertEquals(movieList.get(0).getStars().get(0).getSurname(), moviesActual.get(0).getStars().get(0).getSurname());
+        Assert.assertEquals(movieList.get(1).getId(), moviesActual.get(1).getId());
+        Assert.assertEquals(movieList.get(1).getTitle(), moviesActual.get(1).getTitle());
+        Assert.assertEquals(movieList.get(1).getCategories().size(), moviesActual.get(1).getCategories().size());
+        Assert.assertEquals(movieList.get(1).getCategories().get(0), moviesActual.get(1).getCategories().get(0));
+        Assert.assertEquals(movieList.get(1).getCategories().get(1), moviesActual.get(1).getCategories().get(1));
+        Assert.assertEquals(movieList.get(1).getCategories().get(2), moviesActual.get(1).getCategories().get(2));
+        Assert.assertEquals(movieList.get(1).getDirectors().size(), moviesActual.get(1).getDirectors().size());
+        Assert.assertEquals(movieList.get(1).getDirectors().get(0).getName(), moviesActual.get(1).getDirectors().get(0).getName());
+        Assert.assertEquals(movieList.get(1).getDirectors().get(0).getSurname(), moviesActual.get(1).getDirectors().get(0).getSurname());
+        Assert.assertEquals(movieList.get(1).getStars().size(), moviesActual.get(1).getStars().size());
+        Assert.assertEquals(movieList.get(1).getStars().get(0).getName(), moviesActual.get(1).getStars().get(0).getName());
+        Assert.assertEquals(movieList.get(1).getStars().get(0).getSurname(), moviesActual.get(1).getStars().get(0).getSurname());
     }
 
     @Test
     public void getMoviesFromCacheTest(){
         boolean fromCache = true;
-        List<Movie> moviesExpected = dataHelper.getExpectedMovieList(fromCache);
-        Mockito.doReturn(moviesExpected).when(cacheServiceMock).findListFromCacheWithKey(CacheKey.MOVIES.getName());
-        List<Movie> moviesActual = movieManagerService.getMovies(fromCache);
-        Assert.assertEquals(moviesExpected, moviesActual);
+        // mocking
+        Mockito.doReturn(movieList).when(cacheServiceMock).findListFromCacheWithKey(CacheKey.MOVIES.getName());
+        // actual method call
+        List<Movie> moviesActual = movieManagerRestServiceWebClient.getMovies(fromCache);
+        // assertions
+        Assert.assertEquals(movieList, moviesActual);
     }
 
     @Test(expected = CacheNotInitializedException.class)
     public void getMoviesWithNullCacheTest(){
         boolean fromCache = true;
+        // mocking
         Mockito.when(cacheServiceMock.findListFromCacheWithKey(CacheKey.MOVIES.getName())).thenReturn(null);
-        movieManagerService.getMovies(fromCache);
+        // actual method call
+        movieManagerRestServiceWebClient.getMovies(fromCache);
     }
     //endregion getMovies
 
     //region findMovieById
     @Test
     public void findMovieByIdTest(){
-        com.eri.swagger.movie_api.model.Movie movieExpected = restDataHelper.getExpectedMovie();
+        // mocking
         Mockito.when(webClientMock.get()).thenReturn(requestHeadersUriSpecMock);
-        Mockito.when(requestHeadersUriSpecMock.uri(Mockito.anyString())).thenReturn(requestHeadersSpecMock);
+        Mockito.when(requestHeadersUriSpecMock.uri((String) argumentCaptor.capture())).thenReturn(requestHeadersSpecMock);
         Mockito.when(requestHeadersSpecMock.retrieve()).thenReturn(responseSpecMock);
-        Mockito.when(responseSpecMock.bodyToMono(com.eri.swagger.movie_api.model.Movie.class)).thenReturn(Mono.just(movieExpected));
-        Movie movieActual = movieManagerService.findMovieById(1);
-        Assert.assertEquals(movieExpected.getId().intValue(), movieActual.getId());
-        Assert.assertEquals(movieExpected.getTitle(), movieActual.getTitle());
-        Assert.assertEquals(movieExpected.getCategories().size(), movieActual.getCategories().size());
-        Assert.assertEquals(movieExpected.getCategories().get(0), movieActual.getCategories().get(0));
-        Assert.assertEquals(movieExpected.getCategories().get(1), movieActual.getCategories().get(1));
-        Assert.assertEquals(movieExpected.getDirectors().size(), movieActual.getDirectors().size());
-        Assert.assertEquals(movieExpected.getDirectors().get(0).getName(), movieActual.getDirectors().get(0).getName());
-        Assert.assertEquals(movieExpected.getDirectors().get(0).getSurname(), movieActual.getDirectors().get(0).getSurname());
-        Assert.assertEquals(movieExpected.getStars().size(), movieActual.getStars().size());
-        Assert.assertEquals(movieExpected.getStars().get(0).getName(), movieActual.getStars().get(0).getName());
-        Assert.assertEquals(movieExpected.getStars().get(0).getSurname(), movieActual.getStars().get(0).getSurname());
+        Mockito.when(responseSpecMock.bodyToMono(com.eri.swagger.movie_api.model.Movie.class)).thenReturn(Mono.just(movieRestList.get(0)));
+        Mockito.when(restMapper.generatedToModel(movieRestList.get(0))).thenReturn(movieList.get(0));
+        // actual method call
+        Movie movieActual = movieManagerRestServiceWebClient.findMovieById(1);
+        // assertions
+        Assert.assertEquals(movieList.get(0).getId(), movieActual.getId());
+        Assert.assertEquals(movieList.get(0).getTitle(), movieActual.getTitle());
+        Assert.assertEquals(movieList.get(0).getCategories().size(), movieActual.getCategories().size());
+        Assert.assertEquals(movieList.get(0).getCategories().get(0), movieActual.getCategories().get(0));
+        Assert.assertEquals(movieList.get(0).getCategories().get(1), movieActual.getCategories().get(1));
+        Assert.assertEquals(movieList.get(0).getDirectors().size(), movieActual.getDirectors().size());
+        Assert.assertEquals(movieList.get(0).getDirectors().get(0).getName(), movieActual.getDirectors().get(0).getName());
+        Assert.assertEquals(movieList.get(0).getDirectors().get(0).getSurname(), movieActual.getDirectors().get(0).getSurname());
+        Assert.assertEquals(movieList.get(0).getStars().size(), movieActual.getStars().size());
+        Assert.assertEquals(movieList.get(0).getStars().get(0).getName(), movieActual.getStars().get(0).getName());
+        Assert.assertEquals(movieList.get(0).getStars().get(0).getSurname(), movieActual.getStars().get(0).getSurname());
     }
 
     @Test
     public void findMovieByIdMovieNotFoundTest(){
+        // mocking
         Mockito.when(webClientMock.get()).thenReturn(requestHeadersUriSpecMock);
         Mockito.when(requestHeadersUriSpecMock.uri(Mockito.anyString())).thenReturn(requestHeadersSpecMock);
         Mockito.when(requestHeadersSpecMock.retrieve()).thenReturn(responseSpecMock);
         Mockito.when(responseSpecMock.bodyToMono(com.eri.swagger.movie_api.model.Movie.class)).thenReturn(Mono.empty());
-        Movie movieActual = movieManagerService.findMovieById(1200);
+        Mockito.when(restMapper.generatedToModel(null)).thenReturn(null);
+        // actual method call
+        Movie movieActual = movieManagerRestServiceWebClient.findMovieById(1200);
+        // assertions
         Assert.assertNull(movieActual);
     }
     //endregion findMovieById
@@ -140,25 +180,32 @@ public class MovieManagerRestServiceWebClientImplTest extends MovieProjectJUnitT
     //region addMovie
     @Test
     public void addMovieTest(){
-        Movie movie = dataHelper.getExpectedMovie();
+        int id = 3;
+        Movie movie = dataHelper.createRandomMovie(id);
+        com.eri.swagger.movie_api.model.Movie movieRest = restDataHelper.createRandomMovie(id);
+        // mocking
+        Mockito.when(restMapper.modelToGenerated(movie)).thenReturn(movieRest);
         Mockito.when(webClientMock.post()).thenReturn(requestBodyUriSpecMock);
-        Mockito.when(requestBodyUriSpecMock.uri(Mockito.anyString())).thenReturn(requestBodySpecMock);
+        Mockito.when(requestBodyUriSpecMock.uri((String) argumentCaptor.capture())).thenReturn(requestBodySpecMock);
         Mockito.when(requestBodySpecMock.header(Mockito.eq(HttpHeaders.CONTENT_TYPE), Mockito.eq(MediaType.APPLICATION_JSON_VALUE))).thenReturn(requestBodySpecMock);
         Mockito.when(requestBodySpecMock.body(Mockito.any(Mono.class), Mockito.eq(com.eri.swagger.movie_api.model.Movie.class))).thenReturn(requestHeadersSpecMock);
         Mockito.when(requestHeadersSpecMock.retrieve()).thenReturn(responseSpecMock);
         Mockito.when(responseSpecMock.bodyToMono(Mockito.eq(Void.class))).thenReturn(Mono.empty());
-        movieManagerService.addMovie(movie);
+        // actual method call
+        movieManagerRestServiceWebClient.addMovie(movie);
     }
     //endregion addMovie
 
     //region removeMovieById
     @Test
     public void removeMovieByIdTest(){
+        // mocking
         Mockito.when(webClientMock.delete()).thenReturn(requestHeadersUriSpecMock);
-        Mockito.when(requestHeadersUriSpecMock.uri(Mockito.anyString())).thenReturn(requestHeadersSpecMock);
+        Mockito.when(requestHeadersUriSpecMock.uri((String) argumentCaptor.capture())).thenReturn(requestHeadersSpecMock);
         Mockito.when(requestHeadersSpecMock.retrieve()).thenReturn(responseSpecMock);
         Mockito.when(responseSpecMock.bodyToMono(Mockito.eq(Void.class))).thenReturn(Mono.empty());
-        movieManagerService.removeMovieById(1);
+        // actual method call
+        movieManagerRestServiceWebClient.removeMovieById(1);
     }
     //endregion removeMovieById
 }
