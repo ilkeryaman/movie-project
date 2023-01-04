@@ -10,7 +10,6 @@ import org.springframework.http.MediaType;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HttpUtilTest {
-
     @Test
     public void getDefaultHttpHeadersTest(){
         HttpUtil httpUtil = new HttpUtil();

@@ -29,10 +29,10 @@ public class MovieManagerDBServiceImplTest {
 
     //region mocks
     @Mock
-    private MovieEntityToMovieMapper movieEntityToMovieMapper;
+    private MovieEntityToMovieMapper movieEntityToMovieMapperMock;
 
     @Mock
-    private MovieToMovieEntityMapper movieToMovieEntityMapper;
+    private MovieToMovieEntityMapper movieToMovieEntityMapperMock;
 
     @Mock
     private IMovieService movieServiceMock;
@@ -64,8 +64,8 @@ public class MovieManagerDBServiceImplTest {
         boolean fromCache = false;
         // mocking
         Mockito.when(movieServiceMock.getMovieList()).thenReturn(movieEntityList);
-        Mockito.when(movieEntityToMovieMapper.mapMovieEntityToMovie(Mockito.eq(movieEntityList.get(0)))).thenReturn(movieList.get(0));
-        Mockito.when(movieEntityToMovieMapper.mapMovieEntityToMovie(Mockito.eq(movieEntityList.get(1)))).thenReturn(movieList.get(1));
+        Mockito.when(movieEntityToMovieMapperMock.mapMovieEntityToMovie(Mockito.eq(movieEntityList.get(0)))).thenReturn(movieList.get(0));
+        Mockito.when(movieEntityToMovieMapperMock.mapMovieEntityToMovie(Mockito.eq(movieEntityList.get(1)))).thenReturn(movieList.get(1));
         Mockito.when(cacheServiceMock.findListFromCacheWithKey(Mockito.eq(CacheKey.MOVIES.getName()))).thenReturn(null);
         Mockito.doNothing().when(cacheServiceMock).putCache(Mockito.eq(CacheKey.MOVIES.getName()), Mockito.any(List.class));
         // actual method call
@@ -137,7 +137,7 @@ public class MovieManagerDBServiceImplTest {
         Movie movie = movieList.get(0);
         // mocking
         Mockito.when(movieServiceMock.getMovieById(Mockito.anyLong())).thenReturn(movieEntity);
-        Mockito.when(movieEntityToMovieMapper.mapMovieEntityToMovie(Mockito.eq(movieEntity))).thenReturn(movie);
+        Mockito.when(movieEntityToMovieMapperMock.mapMovieEntityToMovie(Mockito.eq(movieEntity))).thenReturn(movie);
         // actual method call
         Movie movieActual = movieManagerDBService.findMovieById(1);
         // assertions
@@ -172,7 +172,7 @@ public class MovieManagerDBServiceImplTest {
         MovieEntity movieEntity = entityDataHelper.createRandomMovieEntity(id);
         Movie movie = dataHelper.createRandomMovie(id);
         // mocking
-        Mockito.when(movieToMovieEntityMapper.mapMovieToMovieEntity(Mockito.eq(movie))).thenReturn(movieEntity);
+        Mockito.when(movieToMovieEntityMapperMock.mapMovieToMovieEntity(Mockito.eq(movie))).thenReturn(movieEntity);
         Mockito.when(movieServiceMock.saveMovie(Mockito.eq(movieEntity))).thenReturn(movieEntity);
         // actual method call
         movieManagerDBService.addMovie(movie);

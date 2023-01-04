@@ -19,7 +19,7 @@ public class CategoryValidatorTest {
 
     //region mocks
     @Mock
-    ConstraintValidatorContext constraintValidatorContext;
+    ConstraintValidatorContext constraintValidatorContextMock;
     //endregion mocks
 
     @Test
@@ -28,13 +28,13 @@ public class CategoryValidatorTest {
         List<String> listThatContainsValidCategories = Arrays.asList(Category.ACTION.getName(), Category.DRAMA.getName());
         List<String> listThatContainsSomeInvalidCategories = Arrays.asList(Category.ACTION.getName(), invalidCategory);
         // assertions
-        Assert.assertTrue(categoryValidator.isValid(listThatContainsValidCategories, constraintValidatorContext));
-        Assert.assertFalse(categoryValidator.isValid(listThatContainsSomeInvalidCategories, constraintValidatorContext));
+        Assert.assertTrue(categoryValidator.isValid(listThatContainsValidCategories, constraintValidatorContextMock));
+        Assert.assertFalse(categoryValidator.isValid(listThatContainsSomeInvalidCategories, constraintValidatorContextMock));
     }
 
     @Test(expected = NullPointerException.class)
     public void isValidNullCategoryTest(){
         // actual method call
-        categoryValidator.isValid(null, constraintValidatorContext);
+        categoryValidator.isValid(null, constraintValidatorContextMock);
     }
 }

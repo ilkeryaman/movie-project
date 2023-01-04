@@ -3,6 +3,8 @@ package com.eri.dal.service.impl;
 import com.eri.dal.entity.StarEntity;
 import com.eri.dal.repository.StarRepository;
 import com.eri.dal.service.IStarService;
+import com.eri.exception.NullNameException;
+import com.eri.exception.NullSurnameException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -38,10 +40,14 @@ public class StarServiceImpl implements IStarService {
 
         if (Objects.nonNull(starEntity.getName()) && !"".equalsIgnoreCase(starEntity.getName())) {
             starAtDB.setName(starEntity.getName());
+        } else {
+            throw new NullNameException();
         }
 
         if (Objects.nonNull(starEntity.getSurname()) && !"".equalsIgnoreCase(starEntity.getSurname())) {
             starAtDB.setSurname(starEntity.getSurname());
+        } else {
+            throw new NullSurnameException();
         }
 
         return starRepository.save(starAtDB);

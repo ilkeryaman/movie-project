@@ -21,7 +21,7 @@ public class CacheUtilTest {
 
     //region mocks
     @Mock
-    ICacheService cacheService;
+    ICacheService cacheServiceMock;
     //endregion mocks
 
     //region fields
@@ -39,18 +39,18 @@ public class CacheUtilTest {
     @Test
     public void cacheIfNeededTest(){
         // mocking
-        Mockito.doReturn(movieList).when(cacheService).findListFromCacheWithKey(Mockito.eq(CacheKey.MOVIES.getName()));
+        Mockito.doReturn(movieList).when(cacheServiceMock).findListFromCacheWithKey(Mockito.eq(CacheKey.MOVIES.getName()));
         // actual method call
-        cacheUtil.cacheIfNeeded(cacheService, movieList);
+        cacheUtil.cacheIfNeeded(cacheServiceMock, movieList);
     }
 
     @Test
     public void cacheIfNeededTestCacheNull(){
         // mocking
-        Mockito.when(cacheService.findListFromCacheWithKey(Mockito.eq(CacheKey.MOVIES.getName()))).thenReturn(null);
-        Mockito.doNothing().when(cacheService).putCache(Mockito.eq(CacheKey.MOVIES.getName()), Mockito.any(List.class));
+        Mockito.when(cacheServiceMock.findListFromCacheWithKey(Mockito.eq(CacheKey.MOVIES.getName()))).thenReturn(null);
+        Mockito.doNothing().when(cacheServiceMock).putCache(Mockito.eq(CacheKey.MOVIES.getName()), Mockito.any(List.class));
         // actual method call
-        cacheUtil.cacheIfNeeded(cacheService, movieList);
+        cacheUtil.cacheIfNeeded(cacheServiceMock, movieList);
     }
     //endregion cacheIfNeeded
 }

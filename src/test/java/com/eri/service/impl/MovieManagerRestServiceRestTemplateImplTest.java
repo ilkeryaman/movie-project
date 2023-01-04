@@ -42,7 +42,7 @@ public class MovieManagerRestServiceRestTemplateImplTest {
     private RestTemplate movieRestTemplateMock;
 
     @Mock
-    private IMovieRestMapper movieRestMapper;
+    private IMovieRestMapper movieRestMapperMock;
     //endregion mocks
 
     //region fields
@@ -71,8 +71,8 @@ public class MovieManagerRestServiceRestTemplateImplTest {
                 (movieRestList.toArray(com.eri.swagger.movie_api.model.Movie[]::new), HttpStatus.OK);
         // mocking
         Mockito.when(movieRestTemplateMock.exchange((String) argumentCaptor.capture(), Mockito.eq(HttpMethod.GET), Mockito.any(HttpEntity.class), Mockito.eq(com.eri.swagger.movie_api.model.Movie[].class))).thenReturn(responseEntity);
-        Mockito.when(movieRestMapper.generatedToModel(Mockito.eq(movieRestList.get(0)))).thenReturn(movieList.get(0));
-        Mockito.when(movieRestMapper.generatedToModel(Mockito.eq(movieRestList.get(1)))).thenReturn(movieList.get(1));
+        Mockito.when(movieRestMapperMock.generatedToModel(Mockito.eq(movieRestList.get(0)))).thenReturn(movieList.get(0));
+        Mockito.when(movieRestMapperMock.generatedToModel(Mockito.eq(movieRestList.get(1)))).thenReturn(movieList.get(1));
         // actual method call
         List<Movie> moviesActual = movieManagerRestServiceRestTemplate.getMovies(fromCache);
         // assertions
@@ -133,7 +133,7 @@ public class MovieManagerRestServiceRestTemplateImplTest {
         Mockito
                 .when(movieRestTemplateMock.exchange((String) argumentCaptor.capture(), Mockito.eq(HttpMethod.GET), Mockito.any(HttpEntity.class), Mockito.eq(com.eri.swagger.movie_api.model.Movie.class), Mockito.anyInt()))
                 .thenReturn(responseEntity);
-        Mockito.when(movieRestMapper.generatedToModel(Mockito.eq(movie))).thenReturn(movieList.get(0));
+        Mockito.when(movieRestMapperMock.generatedToModel(Mockito.eq(movie))).thenReturn(movieList.get(0));
         // actual method call
         Movie movieActual = movieManagerRestServiceRestTemplate.findMovieById(1);
         // assertions

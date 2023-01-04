@@ -37,7 +37,7 @@ public class MovieManagerRestServiceWebClientImplTest {
     ICacheService cacheServiceMock;
 
     @Mock
-    IMovieRestMapper restMapper;
+    IMovieRestMapper restMapperMock;
 
     @Mock
     WebClient webClientMock;
@@ -85,8 +85,8 @@ public class MovieManagerRestServiceWebClientImplTest {
         Mockito.when(requestHeadersUriSpecMock.uri((String) argumentCaptor.capture())).thenReturn(requestHeadersSpecMock);
         Mockito.when(requestHeadersSpecMock.retrieve()).thenReturn(responseSpecMock);
         Mockito.when(responseSpecMock.bodyToMono(com.eri.swagger.movie_api.model.Movie[].class)).thenReturn(Mono.just(movieRestList.toArray(new com.eri.swagger.movie_api.model.Movie[0])));
-        Mockito.when(restMapper.generatedToModel(movieRestList.get(0))).thenReturn(movieList.get(0));
-        Mockito.when(restMapper.generatedToModel(movieRestList.get(1))).thenReturn(movieList.get(1));
+        Mockito.when(restMapperMock.generatedToModel(movieRestList.get(0))).thenReturn(movieList.get(0));
+        Mockito.when(restMapperMock.generatedToModel(movieRestList.get(1))).thenReturn(movieList.get(1));
         // actual method call
         List<Movie> moviesActual = movieManagerRestServiceWebClient.getMovies(fromCache);
         // assertions
@@ -145,7 +145,7 @@ public class MovieManagerRestServiceWebClientImplTest {
         Mockito.when(requestHeadersUriSpecMock.uri((String) argumentCaptor.capture())).thenReturn(requestHeadersSpecMock);
         Mockito.when(requestHeadersSpecMock.retrieve()).thenReturn(responseSpecMock);
         Mockito.when(responseSpecMock.bodyToMono(com.eri.swagger.movie_api.model.Movie.class)).thenReturn(Mono.just(movieRestList.get(0)));
-        Mockito.when(restMapper.generatedToModel(movieRestList.get(0))).thenReturn(movieList.get(0));
+        Mockito.when(restMapperMock.generatedToModel(movieRestList.get(0))).thenReturn(movieList.get(0));
         // actual method call
         Movie movieActual = movieManagerRestServiceWebClient.findMovieById(1);
         // assertions
@@ -169,7 +169,7 @@ public class MovieManagerRestServiceWebClientImplTest {
         Mockito.when(requestHeadersUriSpecMock.uri(Mockito.anyString())).thenReturn(requestHeadersSpecMock);
         Mockito.when(requestHeadersSpecMock.retrieve()).thenReturn(responseSpecMock);
         Mockito.when(responseSpecMock.bodyToMono(com.eri.swagger.movie_api.model.Movie.class)).thenReturn(Mono.empty());
-        Mockito.when(restMapper.generatedToModel(null)).thenReturn(null);
+        Mockito.when(restMapperMock.generatedToModel(null)).thenReturn(null);
         // actual method call
         Movie movieActual = movieManagerRestServiceWebClient.findMovieById(1200);
         // assertions
@@ -184,7 +184,7 @@ public class MovieManagerRestServiceWebClientImplTest {
         Movie movie = dataHelper.createRandomMovie(id);
         com.eri.swagger.movie_api.model.Movie movieRest = restDataHelper.createRandomMovie(id);
         // mocking
-        Mockito.when(restMapper.modelToGenerated(movie)).thenReturn(movieRest);
+        Mockito.when(restMapperMock.modelToGenerated(movie)).thenReturn(movieRest);
         Mockito.when(webClientMock.post()).thenReturn(requestBodyUriSpecMock);
         Mockito.when(requestBodyUriSpecMock.uri((String) argumentCaptor.capture())).thenReturn(requestBodySpecMock);
         Mockito.when(requestBodySpecMock.header(Mockito.eq(HttpHeaders.CONTENT_TYPE), Mockito.eq(MediaType.APPLICATION_JSON_VALUE))).thenReturn(requestBodySpecMock);

@@ -3,6 +3,7 @@ package com.eri.dal.service.impl;
 import com.eri.dal.entity.MovieEntity;
 import com.eri.dal.repository.MovieRepository;
 import com.eri.dal.service.IMovieService;
+import com.eri.exception.NullTitleException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -38,6 +39,8 @@ public class MovieServiceImpl implements IMovieService {
 
         if (Objects.nonNull(movieEntity.getTitle()) && !"".equalsIgnoreCase(movieEntity.getTitle())) {
             movieAtDB.setTitle(movieEntity.getTitle());
+        } else {
+            throw new NullTitleException();
         }
 
         movieAtDB.getCategories().clear();

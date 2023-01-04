@@ -33,13 +33,13 @@ public class MovieManagerSoapServiceImplTest {
 
     //region mocks
     @Mock
-    ICacheService cacheService;
+    ICacheService cacheServiceMock;
 
     @Mock
-    IMovieMapper movieMapper;
+    IMovieMapper movieMapperMock;
 
     @Mock
-    SoapClient soapClient;
+    SoapClient soapClientMock;
     //endregion mocks
 
     //region fields
@@ -63,9 +63,9 @@ public class MovieManagerSoapServiceImplTest {
         boolean fromCache = false;
         ListMoviesResponse listMoviesResponse = soapDataHelper.getMovieListResponse();
         // mocking
-        Mockito.when(soapClient.listMovies((String) argumentCaptor.capture(), Mockito.any(ListMoviesRequest.class))).thenReturn(listMoviesResponse);
-        Mockito.when(movieMapper.generatedToModel(listMoviesResponse.getMovies().get(0))).thenReturn(movieList.get(0));
-        Mockito.when(movieMapper.generatedToModel(listMoviesResponse.getMovies().get(1))).thenReturn(movieList.get(1));
+        Mockito.when(soapClientMock.listMovies((String) argumentCaptor.capture(), Mockito.any(ListMoviesRequest.class))).thenReturn(listMoviesResponse);
+        Mockito.when(movieMapperMock.generatedToModel(listMoviesResponse.getMovies().get(0))).thenReturn(movieList.get(0));
+        Mockito.when(movieMapperMock.generatedToModel(listMoviesResponse.getMovies().get(1))).thenReturn(movieList.get(1));
         // actual method call
         List<Movie> moviesActual = movieManagerSoapService.getMovies(fromCache);
         // assertions
@@ -98,7 +98,7 @@ public class MovieManagerSoapServiceImplTest {
     public void getMoviesFromCacheTest(){
         boolean fromCache = true;
         // mocking
-        Mockito.doReturn(movieList).when(cacheService).findListFromCacheWithKey(Mockito.anyString());
+        Mockito.doReturn(movieList).when(cacheServiceMock).findListFromCacheWithKey(Mockito.anyString());
         // actual method call
         List<Movie> moviesResponse = movieManagerSoapService.getMovies(fromCache);
         // assertions
@@ -109,7 +109,7 @@ public class MovieManagerSoapServiceImplTest {
     public void getMoviesWithNullCacheTest(){
         boolean fromCache = true;
         // mocking
-        Mockito.doReturn(null).when(cacheService).findListFromCacheWithKey(Mockito.anyString());
+        Mockito.doReturn(null).when(cacheServiceMock).findListFromCacheWithKey(Mockito.anyString());
         // actual method call
         movieManagerSoapService.getMovies(fromCache);
     }
@@ -121,8 +121,8 @@ public class MovieManagerSoapServiceImplTest {
         int id = 1;
         ListMoviesResponse listMoviesResponse = soapDataHelper.getMovieResponse();
         // mocking
-        Mockito.when(soapClient.listMovies((String) argumentCaptor.capture(), Mockito.any(ListMoviesRequest.class))).thenReturn(listMoviesResponse);
-        Mockito.when(movieMapper.generatedToModel(listMoviesResponse.getMovies().get(0))).thenReturn(movieList.get(0));
+        Mockito.when(soapClientMock.listMovies((String) argumentCaptor.capture(), Mockito.any(ListMoviesRequest.class))).thenReturn(listMoviesResponse);
+        Mockito.when(movieMapperMock.generatedToModel(listMoviesResponse.getMovies().get(0))).thenReturn(movieList.get(0));
         // actual method call
         Movie movie = movieManagerSoapService.findMovieById(id);
         // assertions
@@ -132,7 +132,7 @@ public class MovieManagerSoapServiceImplTest {
     @Test(expected = MovieNotFoundException.class)
     public void findMovieByIdMovieNotFoundTest(){
         // mocking
-        Mockito.when(soapClient.listMovies((String) argumentCaptor.capture(), Mockito.any(ListMoviesRequest.class))).thenReturn(new ListMoviesResponse());
+        Mockito.when(soapClientMock.listMovies((String) argumentCaptor.capture(), Mockito.any(ListMoviesRequest.class))).thenReturn(new ListMoviesResponse());
         // actual method call
         movieManagerSoapService.findMovieById(1);
     }

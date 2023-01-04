@@ -3,6 +3,8 @@ package com.eri.dal.service.impl;
 import com.eri.dal.entity.DirectorEntity;
 import com.eri.dal.repository.DirectorRepository;
 import com.eri.dal.service.IDirectorService;
+import com.eri.exception.NullNameException;
+import com.eri.exception.NullSurnameException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -38,10 +40,14 @@ public class DirectorServiceImpl implements IDirectorService {
 
         if (Objects.nonNull(directorEntity.getName()) && !"".equalsIgnoreCase(directorEntity.getName())) {
             directorAtDB.setName(directorEntity.getName());
+        } else {
+            throw new NullNameException();
         }
 
         if (Objects.nonNull(directorEntity.getSurname()) && !"".equalsIgnoreCase(directorEntity.getSurname())) {
             directorAtDB.setSurname(directorEntity.getSurname());
+        } else {
+            throw new NullSurnameException();
         }
 
         return directorRepository.save(directorAtDB);

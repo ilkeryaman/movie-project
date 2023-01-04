@@ -1,8 +1,10 @@
 package com.eri.dal.service.impl;
 
+import com.eri.constant.enums.Category;
 import com.eri.dal.entity.CategoryEntity;
 import com.eri.dal.repository.CategoryRepository;
 import com.eri.dal.service.ICategoryService;
+import com.eri.exception.NullCategoryNameException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -24,17 +26,17 @@ public class CategoryServiceImpl implements ICategoryService {
     @Override
     public List<CategoryEntity> getDefaultCategoryList() {
         CategoryEntity action = new CategoryEntity();
-        action.setName("action");
+        action.setName(Category.ACTION.getName());
         CategoryEntity adventure = new CategoryEntity();
-        adventure.setName("adventure");
+        adventure.setName(Category.ADVENTURE.getName());
         CategoryEntity crime = new CategoryEntity();
-        crime.setName("crime");
+        crime.setName(Category.CRIME.getName());
         CategoryEntity drama = new CategoryEntity();
-        drama.setName("drama");
+        drama.setName(Category.DRAMA.getName());
         CategoryEntity fantasy = new CategoryEntity();
-        fantasy.setName("fantasy");
+        fantasy.setName(Category.FANTASY.getName());
         CategoryEntity sciFi = new CategoryEntity();
-        sciFi.setName("sci-fi");
+        sciFi.setName(Category.SCI_FI.getName());
         return Arrays.asList(action, adventure, crime, drama, fantasy, sciFi);
     }
 
@@ -50,6 +52,8 @@ public class CategoryServiceImpl implements ICategoryService {
 
         if (Objects.nonNull(categoryEntity.getName()) && !"".equalsIgnoreCase(categoryEntity.getName())) {
             categoryAtDB.setName(categoryEntity.getName());
+        } else {
+            throw new NullCategoryNameException();
         }
 
         return categoryRepository.save(categoryAtDB);
