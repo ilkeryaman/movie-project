@@ -1,14 +1,9 @@
 package com.eri.dal.service.impl;
 
-import com.eri.constants.enums.TestData;
-import com.eri.dal.entity.DirectorEntity;
 import com.eri.dal.entity.MovieEntity;
-import com.eri.dal.entity.StarEntity;
 import com.eri.dal.repository.MovieRepository;
 import com.eri.exception.NullTitleException;
-import com.eri.helper.MovieDataHelper;
 import com.eri.helper.MovieEntityDataHelper;
-import com.eri.model.Movie;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,9 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @RunWith(MockitoJUnitRunner.class)
