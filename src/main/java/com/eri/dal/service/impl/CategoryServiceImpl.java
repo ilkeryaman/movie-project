@@ -26,16 +26,22 @@ public class CategoryServiceImpl implements ICategoryService {
     @Override
     public List<CategoryEntity> getDefaultCategoryList() {
         CategoryEntity action = new CategoryEntity();
+        action.setId(1L);
         action.setName(Category.ACTION.getName());
         CategoryEntity adventure = new CategoryEntity();
+        action.setId(2L);
         adventure.setName(Category.ADVENTURE.getName());
         CategoryEntity crime = new CategoryEntity();
+        action.setId(3L);
         crime.setName(Category.CRIME.getName());
         CategoryEntity drama = new CategoryEntity();
+        action.setId(4L);
         drama.setName(Category.DRAMA.getName());
         CategoryEntity fantasy = new CategoryEntity();
+        action.setId(5L);
         fantasy.setName(Category.FANTASY.getName());
         CategoryEntity sciFi = new CategoryEntity();
+        action.setId(6L);
         sciFi.setName(Category.SCI_FI.getName());
         return Arrays.asList(action, adventure, crime, drama, fantasy, sciFi);
     }
