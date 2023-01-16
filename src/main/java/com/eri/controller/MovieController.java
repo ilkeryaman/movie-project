@@ -37,6 +37,15 @@ public class MovieController {
         return movieManagerService.getMovies(fromCache);
     }
 
+    @Operation(summary = "Lists all newcoming movies.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)) })
+    })
+    @GetMapping("/newcomers")
+    public List<Movie> listNewcomers(){
+        return movieManagerService.listNewComers();
+    }
+
     @Operation(summary = "Gets movie by id.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)) }),

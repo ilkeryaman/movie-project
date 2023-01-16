@@ -5,7 +5,9 @@ import com.eri.exception.CacheNotInitializedException;
 import com.eri.exception.MovieNotFoundException;
 import com.eri.helper.MovieDataHelper;
 import com.eri.model.Movie;
+import com.eri.model.messaging.EventMessage;
 import com.eri.service.cache.ICacheService;
+import com.eri.service.messaging.IMessageService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +28,9 @@ public class MovieManagerFileServiceImplTest {
     //region mocks
     @Mock
     private ICacheService cacheServiceMock;
+
+    @Mock
+    private IMessageService messageServiceMock;
     //endregion mocks
 
     //region fields
@@ -80,6 +85,28 @@ public class MovieManagerFileServiceImplTest {
     }
     //endregion getMovies
 
+    //region listNewcomers
+    @Test
+    public void listNewComersTest(){
+        // mocking
+        Mockito.doReturn(movieList).when(cacheServiceMock).findListFromCacheWithKey(Mockito.eq(CacheKey.NEWCOMERS.getName()));
+        // actual method call
+        List<Movie> moviesActual = movieManagerFileService.listNewComers();
+        // assertions
+        Assert.assertEquals(movieList, moviesActual);
+    }
+
+    @Test
+    public void listNewComersNullCacheTest(){
+        // mocking
+        Mockito.when(cacheServiceMock.findListFromCacheWithKey(Mockito.eq(CacheKey.NEWCOMERS.getName()))).thenReturn(null);
+        // actual method call
+        List<Movie> moviesActual = movieManagerFileService.listNewComers();
+        // assertions
+        Assert.assertTrue(moviesActual.isEmpty());
+    }
+    //endregion listNewComers
+
     //region findMovieById
     @Test
     public void findMovieByIdTest(){
@@ -108,6 +135,7 @@ public class MovieManagerFileServiceImplTest {
         Movie movie = dataHelper.createRandomMovie(3);
         // mocking
         Mockito.when(movieManagerFileService.getMovies()).thenReturn(movieList);
+        Mockito.doNothing().when(messageServiceMock).sendMessage(Mockito.any(EventMessage.class));
         // actual method call
         movieManagerFileService.addMovie(movie);
         // assertions

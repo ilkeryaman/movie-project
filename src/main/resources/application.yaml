@@ -35,6 +35,11 @@ spring:
     properties:
       hibernate-dialect: org.hibernate.dialect.PostgreSQLDialect
       format_sql: true
+  kafka:
+    enabled: true
+    # bootstrap-servers
+    consumer:
+      group-id: movieapp
 
 spring-doc:
   packages-to-scan: com.eri.controller

@@ -1,15 +1,20 @@
 package com.eri.service.impl;
 
 import com.eri.constant.enums.CacheKey;
+import com.eri.constant.enums.Topic;
 import com.eri.converter.mapstruct.IMovieRestMapper;
 import com.eri.exception.CacheNotInitializedException;
 import com.eri.model.Movie;
+import com.eri.model.messaging.EventMessage;
 import com.eri.service.IMovieManagerService;
 import com.eri.service.cache.ICacheService;
+import com.eri.service.messaging.IMessageService;
 import com.eri.util.CacheUtil;
 import org.apache.http.HttpHeaders;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -17,16 +22,19 @@ import reactor.core.publisher.Mono;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Service("movieManagerWebClientService")
 public class MovieManagerRestServiceWebClientImpl implements IMovieManagerService {
+    @Resource
+    private ICacheService cacheService;
 
     @Resource
-    ICacheService cacheService;
+    private IMovieRestMapper mapper;
 
     @Resource
-    IMovieRestMapper mapper;
+    private IMessageService messageService;
 
     private String remoteApiUri;
 
@@ -40,7 +48,7 @@ public class MovieManagerRestServiceWebClientImpl implements IMovieManagerServic
     }
 
     @Resource
-    WebClient webClient;
+    private WebClient webClient;
 
     @Override
     public List<Movie> getMovies(boolean fromCache) {
@@ -61,6 +69,12 @@ public class MovieManagerRestServiceWebClientImpl implements IMovieManagerServic
     }
 
     @Override
+    public List<Movie> listNewComers(){
+        List<Movie> newComers = cacheService.findListFromCacheWithKey(CacheKey.NEWCOMERS.getName());
+        return newComers == null ? Collections.emptyList() : newComers;
+    }
+
+    @Override
     public Movie findMovieById(int id) {
         Mono<com.eri.swagger.movie_api.model.Movie> movieResponse =
                 webClient.get().uri(getRemoteApiUri() + "/" + id).retrieve().bodyToMono(com.eri.swagger.movie_api.model.Movie.class);
@@ -69,13 +83,17 @@ public class MovieManagerRestServiceWebClientImpl implements IMovieManagerServic
 
     @Override
     public void addMovie(Movie movie) {
-        webClient.post()
+        ResponseEntity<Void> responseEntity = webClient.post()
                 .uri(getRemoteApiUri())
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .body(Mono.just(mapper.modelToGenerated(movie)), com.eri.swagger.movie_api.model.Movie.class)
                 .retrieve()
-                .bodyToMono(Void.class)
+                .toBodilessEntity()
                 .block();
+
+        if(responseEntity.getStatusCode().equals(HttpStatus.CREATED)){
+            messageService.sendMessage(new EventMessage(Topic.MOVIEDB_MOVIE_CREATED.getName(), movie));
+        }
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.eri.service.impl;
 
+import com.eri.constant.enums.CacheKey;
 import com.eri.converter.mapstruct.IMovieMapper;
 import com.eri.exception.CacheNotInitializedException;
 import com.eri.exception.MovieNotFoundException;
@@ -8,7 +9,9 @@ import com.eri.generated.movieapi.stub.ListMoviesResponse;
 import com.eri.helper.MovieDataHelper;
 import com.eri.helper.MovieSoapDataHelper;
 import com.eri.model.Movie;
+import com.eri.model.messaging.EventMessage;
 import com.eri.service.cache.ICacheService;
+import com.eri.service.messaging.IMessageService;
 import com.eri.service.soap.SoapClient;
 import org.junit.Assert;
 import org.junit.Before;
@@ -22,32 +25,35 @@ import java.util.List;
 @RunWith(MockitoJUnitRunner.class)
 public class MovieManagerSoapServiceImplTest {
     @InjectMocks
-    MovieManagerSoapServiceImpl movieManagerSoapService;
+    private MovieManagerSoapServiceImpl movieManagerSoapService;
 
     /*
     // I do not know why I have to use a captor to mock RestTemplate.exchange
     // but without it, Mockito is not mocking RestTemplate.exchange.
     */
     @Captor
-    ArgumentCaptor<Object> argumentCaptor;
+    private ArgumentCaptor<Object> argumentCaptor;
 
     //region mocks
     @Mock
-    ICacheService cacheServiceMock;
+    private ICacheService cacheServiceMock;
 
     @Mock
-    IMovieMapper movieMapperMock;
+    private IMessageService messageServiceMock;
 
     @Mock
-    SoapClient soapClientMock;
+    private IMovieMapper movieMapperMock;
+
+    @Mock
+    private SoapClient soapClientMock;
     //endregion mocks
 
     //region fields
-    MovieSoapDataHelper soapDataHelper;
+    private MovieSoapDataHelper soapDataHelper;
 
-    MovieDataHelper dataHelper;
+    private MovieDataHelper dataHelper;
 
-    List<Movie> movieList;
+    private List<Movie> movieList;
     //endregion fields
 
     @Before
@@ -115,6 +121,28 @@ public class MovieManagerSoapServiceImplTest {
     }
     //endregion getMovies
 
+    //region listNewcomers
+    @Test
+    public void listNewComersTest(){
+        // mocking
+        Mockito.doReturn(movieList).when(cacheServiceMock).findListFromCacheWithKey(Mockito.eq(CacheKey.NEWCOMERS.getName()));
+        // actual method call
+        List<Movie> moviesActual = movieManagerSoapService.listNewComers();
+        // assertions
+        Assert.assertEquals(movieList, moviesActual);
+    }
+
+    @Test
+    public void listNewComersNullCacheTest(){
+        // mocking
+        Mockito.when(cacheServiceMock.findListFromCacheWithKey(Mockito.eq(CacheKey.NEWCOMERS.getName()))).thenReturn(null);
+        // actual method call
+        List<Movie> moviesActual = movieManagerSoapService.listNewComers();
+        // assertions
+        Assert.assertTrue(moviesActual.isEmpty());
+    }
+    //endregion listNewComers
+
     //region findMovieById
     @Test
     public void findMovieByIdTest(){
@@ -142,6 +170,8 @@ public class MovieManagerSoapServiceImplTest {
     @Test
     public void addMovieTest(){
         Movie movie = dataHelper.createRandomMovie(3);
+        // mocking
+        Mockito.doNothing().when(messageServiceMock).sendMessage(Mockito.any(EventMessage.class));
         // actual method call
         movieManagerSoapService.addMovie(movie);
     }

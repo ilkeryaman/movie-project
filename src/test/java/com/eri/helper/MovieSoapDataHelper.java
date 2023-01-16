@@ -14,8 +14,8 @@ public class MovieSoapDataHelper extends DataHelper<com.eri.generated.movieapi.s
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             movies = objectMapper.readValue(new File(pathName), new TypeReference<List<com.eri.generated.movieapi.stub.Movie>>() {});
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
 

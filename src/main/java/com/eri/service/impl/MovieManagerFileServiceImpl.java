@@ -4,7 +4,6 @@ import com.eri.constant.enums.CacheKey;
 import com.eri.exception.CacheNotInitializedException;
 import com.eri.model.Movie;
 import com.eri.service.MovieManagerService;
-import com.eri.service.cache.ICacheService;
 import com.eri.util.CacheUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,17 +19,13 @@ import java.util.List;
 
 @Service("movieManagerFileService")
 public class MovieManagerFileServiceImpl extends MovieManagerService {
-
-    @Resource
-    ICacheService cacheService;
-
     private List<Movie> movies;
 
     @Value("${movie.list.file.url}")
-    String movieFileUrl;
+    private String movieFileUrl;
 
     @Autowired
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
     public MovieManagerFileServiceImpl(){
         movies = new ArrayList<>();
@@ -41,8 +35,8 @@ public class MovieManagerFileServiceImpl extends MovieManagerService {
     private void afterInitialize(){
         try {
             movies = objectMapper.readValue(new File(movieFileUrl), new TypeReference<List<Movie>>() {});
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
 

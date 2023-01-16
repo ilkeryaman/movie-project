@@ -6,7 +6,9 @@ import com.eri.exception.CacheNotInitializedException;
 import com.eri.helper.MovieDataHelper;
 import com.eri.helper.MovieRestDataHelper;
 import com.eri.model.Movie;
+import com.eri.model.messaging.EventMessage;
 import com.eri.service.cache.ICacheService;
+import com.eri.service.messaging.IMessageService;
 import org.apache.http.HttpHeaders;
 import org.junit.Assert;
 import org.junit.Before;
@@ -14,7 +16,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -23,7 +26,7 @@ import java.util.List;
 @RunWith(MockitoJUnitRunner.class)
 public class MovieManagerRestServiceWebClientImplTest {
     @InjectMocks
-    MovieManagerRestServiceWebClientImpl movieManagerRestServiceWebClient;
+    private MovieManagerRestServiceWebClientImpl movieManagerRestServiceWebClient;
 
     /*
     // I do not know why I have to use a captor to mock RestTemplate.exchange
@@ -34,34 +37,36 @@ public class MovieManagerRestServiceWebClientImplTest {
 
     //region mocks
     @Mock
-    ICacheService cacheServiceMock;
+    private ICacheService cacheServiceMock;
 
     @Mock
-    IMovieRestMapper restMapperMock;
+    private IMessageService messageServiceMock;
+    @Mock
+    private IMovieRestMapper restMapperMock;
 
     @Mock
-    WebClient webClientMock;
+    private WebClient webClientMock;
 
     @Mock
-    WebClient.RequestHeadersUriSpec requestHeadersUriSpecMock;
+    private WebClient.RequestHeadersUriSpec requestHeadersUriSpecMock;
 
     @Mock
-    WebClient.RequestBodySpec requestBodySpecMock;
+    private WebClient.RequestBodySpec requestBodySpecMock;
 
     @Mock
-    WebClient.RequestHeadersSpec requestHeadersSpecMock;
+    private WebClient.RequestHeadersSpec requestHeadersSpecMock;
 
     @Mock
-    WebClient.RequestBodyUriSpec requestBodyUriSpecMock;
+    private WebClient.RequestBodyUriSpec requestBodyUriSpecMock;
 
     @Mock
-    WebClient.ResponseSpec responseSpecMock;
+    private WebClient.ResponseSpec responseSpecMock;
     //endregion mocks
 
     //region fields
-    MovieDataHelper dataHelper;
+    private MovieDataHelper dataHelper;
 
-    MovieRestDataHelper restDataHelper;
+    private MovieRestDataHelper restDataHelper;
 
     private List<com.eri.swagger.movie_api.model.Movie> movieRestList;
 
@@ -137,6 +142,28 @@ public class MovieManagerRestServiceWebClientImplTest {
     }
     //endregion getMovies
 
+    //region listNewcomers
+    @Test
+    public void listNewComersTest(){
+        // mocking
+        Mockito.doReturn(movieList).when(cacheServiceMock).findListFromCacheWithKey(Mockito.eq(CacheKey.NEWCOMERS.getName()));
+        // actual method call
+        List<Movie> moviesActual = movieManagerRestServiceWebClient.listNewComers();
+        // assertions
+        Assert.assertEquals(movieList, moviesActual);
+    }
+
+    @Test
+    public void listNewComersNullCacheTest(){
+        // mocking
+        Mockito.when(cacheServiceMock.findListFromCacheWithKey(Mockito.eq(CacheKey.NEWCOMERS.getName()))).thenReturn(null);
+        // actual method call
+        List<Movie> moviesActual = movieManagerRestServiceWebClient.listNewComers();
+        // assertions
+        Assert.assertTrue(moviesActual.isEmpty());
+    }
+    //endregion listNewComers
+
     //region findMovieById
     @Test
     public void findMovieByIdTest(){
@@ -181,6 +208,7 @@ public class MovieManagerRestServiceWebClientImplTest {
     @Test
     public void addMovieTest(){
         int id = 3;
+        Mono<ResponseEntity<Void>> responseEntity = Mono.just(new ResponseEntity<Void>(HttpStatus.CREATED));
         Movie movie = dataHelper.createRandomMovie(id);
         com.eri.swagger.movie_api.model.Movie movieRest = restDataHelper.createRandomMovie(id);
         // mocking
@@ -190,7 +218,24 @@ public class MovieManagerRestServiceWebClientImplTest {
         Mockito.when(requestBodySpecMock.header(Mockito.eq(HttpHeaders.CONTENT_TYPE), Mockito.eq(MediaType.APPLICATION_JSON_VALUE))).thenReturn(requestBodySpecMock);
         Mockito.when(requestBodySpecMock.body(Mockito.any(Mono.class), Mockito.eq(com.eri.swagger.movie_api.model.Movie.class))).thenReturn(requestHeadersSpecMock);
         Mockito.when(requestHeadersSpecMock.retrieve()).thenReturn(responseSpecMock);
-        Mockito.when(responseSpecMock.bodyToMono(Mockito.eq(Void.class))).thenReturn(Mono.empty());
+        Mockito.when(responseSpecMock.toBodilessEntity()).thenReturn(responseEntity);
+        Mockito.doNothing().when(messageServiceMock).sendMessage(Mockito.any(EventMessage.class));
+        // actual method call
+        movieManagerRestServiceWebClient.addMovie(movie);
+    }
+
+    @Test(expected = HttpClientErrorException.BadRequest.class)
+    public void addMovieBadRequestExceptionTest(){
+        int id = 3;
+        Movie movie = dataHelper.createRandomMovie(id);
+        com.eri.swagger.movie_api.model.Movie movieRest = restDataHelper.createRandomMovie(id);
+        // mocking
+        Mockito.when(restMapperMock.modelToGenerated(movie)).thenReturn(movieRest);
+        Mockito.when(webClientMock.post()).thenReturn(requestBodyUriSpecMock);
+        Mockito.when(requestBodyUriSpecMock.uri((String) argumentCaptor.capture())).thenReturn(requestBodySpecMock);
+        Mockito.when(requestBodySpecMock.header(Mockito.eq(HttpHeaders.CONTENT_TYPE), Mockito.eq(MediaType.APPLICATION_JSON_VALUE))).thenReturn(requestBodySpecMock);
+        Mockito.when(requestBodySpecMock.body(Mockito.any(Mono.class), Mockito.eq(com.eri.swagger.movie_api.model.Movie.class))).thenReturn(requestHeadersSpecMock);
+        Mockito.doThrow(HttpClientErrorException.BadRequest.class).when(requestHeadersSpecMock).retrieve();
         // actual method call
         movieManagerRestServiceWebClient.addMovie(movie);
     }

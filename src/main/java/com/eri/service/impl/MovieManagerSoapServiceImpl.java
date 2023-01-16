@@ -1,13 +1,16 @@
 package com.eri.service.impl;
 
 import com.eri.constant.enums.CacheKey;
+import com.eri.constant.enums.Topic;
 import com.eri.converter.mapstruct.IMovieMapper;
 import com.eri.exception.CacheNotInitializedException;
 import com.eri.exception.MovieNotFoundException;
 import com.eri.generated.movieapi.stub.*;
 import com.eri.model.Movie;
+import com.eri.model.messaging.EventMessage;
 import com.eri.service.IMovieManagerService;
 import com.eri.service.cache.ICacheService;
+import com.eri.service.messaging.IMessageService;
 import com.eri.service.soap.SoapClient;
 import com.eri.util.CacheUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +20,13 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service("movieManagerSoapService")
 public class MovieManagerSoapServiceImpl implements IMovieManagerService {
-
     @Resource
-    ICacheService cacheService;
+    private ICacheService cacheService;
 
     @Autowired
     private SoapClient soapClient;
@@ -32,7 +35,10 @@ public class MovieManagerSoapServiceImpl implements IMovieManagerService {
     private String url;
 
     @Autowired
-    IMovieMapper movieMapper;
+    private IMovieMapper movieMapper;
+
+    @Resource
+    private IMessageService messageService;
 
     @Override
     public List<Movie> getMovies(boolean fromCache) {
@@ -49,6 +55,12 @@ public class MovieManagerSoapServiceImpl implements IMovieManagerService {
     }
 
     @Override
+    public List<Movie> listNewComers(){
+        List<Movie> newComers = cacheService.findListFromCacheWithKey(CacheKey.NEWCOMERS.getName());
+        return newComers == null ? Collections.emptyList() : newComers;
+    }
+
+    @Override
     public Movie findMovieById(int id) {
         Movie movie = getMovieById(id).stream().findFirst().orElse(null);
         if(movie == null){
@@ -62,6 +74,7 @@ public class MovieManagerSoapServiceImpl implements IMovieManagerService {
         AddMovieRequest addMovieRequest = new AddMovieRequest();
         addMovieRequest.setMovie(movieMapper.modelToGenerated(movie));
         soapClient.addMovie(url, addMovieRequest);
+        messageService.sendMessage(new EventMessage(Topic.MOVIEDB_MOVIE_CREATED.getName(), movie));
     }
 
     @Override

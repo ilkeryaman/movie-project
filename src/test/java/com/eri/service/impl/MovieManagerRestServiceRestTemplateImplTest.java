@@ -6,7 +6,9 @@ import com.eri.exception.CacheNotInitializedException;
 import com.eri.helper.MovieDataHelper;
 import com.eri.helper.MovieRestDataHelper;
 import com.eri.model.Movie;
+import com.eri.model.messaging.EventMessage;
 import com.eri.service.cache.ICacheService;
+import com.eri.service.messaging.IMessageService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,6 +39,9 @@ public class MovieManagerRestServiceRestTemplateImplTest {
     //region mocks
     @Mock
     private ICacheService cacheServiceMock;
+
+    @Mock
+    private IMessageService messageServiceMock;
 
     @Mock(name = "movieRestTemplate")
     private RestTemplate movieRestTemplateMock;
@@ -123,6 +128,28 @@ public class MovieManagerRestServiceRestTemplateImplTest {
     }
     //endregion getMovies
 
+    //region listNewcomers
+    @Test
+    public void listNewComersTest(){
+        // mocking
+        Mockito.doReturn(movieList).when(cacheServiceMock).findListFromCacheWithKey(Mockito.eq(CacheKey.NEWCOMERS.getName()));
+        // actual method call
+        List<Movie> moviesActual = movieManagerRestServiceRestTemplate.listNewComers();
+        // assertions
+        Assert.assertEquals(movieList, moviesActual);
+    }
+
+    @Test
+    public void listNewComersNullCacheTest(){
+        // mocking
+        Mockito.when(cacheServiceMock.findListFromCacheWithKey(Mockito.eq(CacheKey.NEWCOMERS.getName()))).thenReturn(null);
+        // actual method call
+        List<Movie> moviesActual = movieManagerRestServiceRestTemplate.listNewComers();
+        // assertions
+        Assert.assertTrue(moviesActual.isEmpty());
+    }
+    //endregion listNewComers
+
     //region findMovieById
     @Test
     public void findMovieByIdTest(){
@@ -170,6 +197,7 @@ public class MovieManagerRestServiceRestTemplateImplTest {
         Mockito
                 .when(movieRestTemplateMock.exchange((String) argumentCaptor.capture(), Mockito.eq(HttpMethod.POST), Mockito.any(HttpEntity.class), Mockito.eq(com.eri.swagger.movie_api.model.Movie.class)))
                 .thenReturn(responseEntity);
+        Mockito.doNothing().when(messageServiceMock).sendMessage(Mockito.any(EventMessage.class));
         // actual method call
         movieManagerRestServiceRestTemplate.addMovie(movie);
     }

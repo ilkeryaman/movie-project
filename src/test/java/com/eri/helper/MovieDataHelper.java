@@ -18,8 +18,8 @@ public class MovieDataHelper extends DataHelper<com.eri.model.Movie> {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             movies = objectMapper.readValue(new File(pathName), new TypeReference<List<com.eri.model.Movie>>() {});
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
 

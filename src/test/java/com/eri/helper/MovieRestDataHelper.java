@@ -17,8 +17,8 @@ public class MovieRestDataHelper extends DataHelper<com.eri.swagger.movie_api.mo
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             movies = objectMapper.readValue(new File(pathName), new TypeReference<List<com.eri.swagger.movie_api.model.Movie>>() {});
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
 

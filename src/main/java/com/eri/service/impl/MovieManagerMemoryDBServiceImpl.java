@@ -4,7 +4,6 @@ import com.eri.constant.enums.CacheKey;
 import com.eri.exception.CacheNotInitializedException;
 import com.eri.model.Movie;
 import com.eri.service.MovieManagerService;
-import com.eri.service.cache.ICacheService;
 import com.eri.service.memorydb.IMovieMemoryDBService;
 import com.eri.util.CacheUtil;
 import org.springframework.stereotype.Service;
@@ -15,12 +14,8 @@ import java.util.List;
 
 @Service("movieManagerMemoryDBService")
 public class MovieManagerMemoryDBServiceImpl extends MovieManagerService {
-
     @Resource
-    ICacheService cacheService;
-
-    @Resource
-    IMovieMemoryDBService movieMemoryDBService;
+    private IMovieMemoryDBService movieMemoryDBService;
 
     @Override
     public List<Movie> getMovies(boolean fromCache){

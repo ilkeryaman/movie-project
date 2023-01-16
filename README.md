@@ -16,10 +16,11 @@ This project is for learning Spring Boot Topics.
 11) Spring Boot Actuator
 12) API Versioning
 13) Scheduled Works
-14) Enabling HTTPS
-15) Resilience4J
-16) Writing Unit Tests
-17) Enabling Swagger2
+14) Messaging
+15) Enabling HTTPS
+16) Resilience4J
+17) Writing Unit Tests
+18) Enabling Swagger2
 
 ## Links
 [Tutorialspoint - Spring Boot](https://www.tutorialspoint.com/spring_boot/index.htm)\

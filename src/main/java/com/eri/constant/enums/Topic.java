@@ -1,10 +1,9 @@
 package com.eri.constant.enums;
 
-public enum CacheKey {
-    MOVIES("movies"),
-    NEWCOMERS("newcomers");
+public enum Topic {
+    MOVIEDB_MOVIE_CREATED("moviedb.movie.created");
 
-    CacheKey(String name) {
+    Topic(String name) {
         this.name = name;
     }
 

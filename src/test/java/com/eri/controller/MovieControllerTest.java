@@ -91,6 +91,27 @@ public class MovieControllerTest {
     }
     //endregion listMovies
 
+    //region listNewcomers
+    @Test
+    public void listNewComersTest(){
+        // mocking
+        Mockito.when(movieManagerServiceMock.listNewComers()).thenReturn(movies);
+        // actual method call
+        List<Movie> moviesActual = movieController.listNewcomers();
+        // assertions
+        Assert.assertEquals(movies, moviesActual);
+    }
+
+    @Test
+    public void listNewComersEmptyTest(){
+        // mocking
+        Mockito.when(movieManagerServiceMock.listNewComers()).thenReturn(Collections.emptyList());
+        // actual method call
+        List<Movie> moviesActual = movieController.listNewcomers();
+        // assertions
+        Assert.assertTrue(moviesActual.isEmpty());
+    }
+    //endregion listNewcomers
 
     //region getMovies
     @Test
