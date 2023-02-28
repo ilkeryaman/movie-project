@@ -19,7 +19,7 @@ This project is for learning Spring Boot Topics.
 14) Messaging
 15) Enabling HTTPS
 16) Resilience4J
-17) Writing Unit Tests
+17) Developing Unit Tests
 18) Enabling Swagger2
 
 ## Links
